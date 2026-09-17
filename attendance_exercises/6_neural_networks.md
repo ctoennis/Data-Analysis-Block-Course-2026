@@ -50,7 +50,7 @@ We will use a simplified dataset to investigate what happens as the neural netwo
 
 Suppose the network makes the following predictions for 10 images.
 
-| Image | True label \(y\) | Predicted probability \(\hat y\) |
+| Image | True label $y$ | Predicted probability $\hat y$ |
 | :---: | :--------------: | -------------------------------: |
 |   1   |         1        |                             0.90 |
 |   2   |         0        |                             0.10 |
@@ -119,13 +119,13 @@ y\log(\hat y)
 }
 $$
 
-For \(y=1\):
+For $y=1\):
 
 $$
 L_{\mathrm{BCE}}=-\log(\hat y)
 $$
 
-For \(y=0\):
+For $y=0\):
 
 $$
 L_{\mathrm{BCE}}=-\log(1-\hat y).
@@ -185,7 +185,7 @@ $$
 
 Consider the following predictions:
 
-| Example | \(y\) | \(\hat y\) |
+| Example | $y\) | $\hat y$ |
 | :-----: | :---: | ---------: |
 |    1    |   1   |       0.90 |
 |    2    |   0   |       0.10 |
@@ -372,14 +372,14 @@ For example, suppose a layer has six neurons:
 ```text
 Before dropout:
 
-●  ●  ●  ●  ●  ●
+x  x  x  x  x  x
 
 After dropout:
 
-●  ○  ●  ○  ●  ●
+x  o  x  o  x  x
 ```
 
-The neurons represented by `○` are temporarily disabled during that training step.
+The neurons represented by `o` are temporarily disabled during that training step.
 
 Suppose the dropout rate is:
 

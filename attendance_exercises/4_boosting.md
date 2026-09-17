@@ -32,9 +32,9 @@ A cardiologist has already determined whether each patient actually has heart di
 For this exercise:
 
 * `+1` = heart disease
-* `−1` = no heart disease
+* `-1` = no heart disease
 
-> **Important:** This is a simplified educational dataset. The variables and values are fictional and are not intended to represent a real clinical diagnostic system.
+**Important:** This is a simplified educational dataset. The variables and values are fictional and are not intended to represent a real clinical diagnostic system.
 
 ---
 
@@ -42,16 +42,16 @@ For this exercise:
 
 | Patient | Age | Weight (kg) | Blocked arteries | Chest pain | Actual diagnosis |
 | :-----: | --: | ----------: | :--------------: | :--------: | :--------------: |
-|    1    |  25 |          62 |        No        |     No     |        −1        |
+|    1    |  25 |          62 |        No        |     No     |        -1        |
 |    2    |  35 |          72 |        No        |     Yes    |        +1        |
 |    3    |  45 |          85 |        Yes       |     No     |        +1        |
 |    4    |  50 |          95 |        No        |     Yes    |        +1        |
 |    5    |  55 |          80 |        Yes       |     Yes    |        +1        |
 |    6    |  60 |          90 |        Yes       |     No     |        +1        |
-|    7    |  65 |          70 |        No        |     No     |        −1        |
-|    8    |  40 |         100 |        No        |     No     |        −1        |
+|    7    |  65 |          70 |        No        |     No     |        -1        |
+|    8    |  40 |         100 |        No        |     No     |        -1        |
 |    9    |  70 |          88 |        Yes       |     No     |        +1        |
-|    10   |  30 |         110 |        No        |     No     |        −1        |
+|    10   |  30 |         110 |        No        |     No     |        -1        |
 
 There are **6 patients with heart disease** and **4 without heart disease**.
 
@@ -176,7 +176,7 @@ $$
 w_i I(y_i\neq h(x_i))
 $$
 
-where \(I(\cdot)\) equals 1 when the prediction is wrong and 0 otherwise.
+where $I(\cdot)$ equals 1 when the prediction is wrong and 0 otherwise.
 
 ### Questions
 
@@ -205,7 +205,7 @@ $$
 }
 $$
 
-where \(\epsilon\) is the weighted error of the stump.
+where $\epsilon$ is the weighted error of the stump.
 
 Suppose the first stump has weighted error
 
@@ -215,10 +215,10 @@ $$
 
 ### Questions
 
-1. Calculate \(\alpha\).
-2. Is \(\alpha\) positive or negative?
-3. What does a larger value of \(\alpha\) mean?
-4. What would happen to \(\alpha\) if the stump had an error of exactly 50%?
+1. Calculate $\alpha$.
+2. Is $\alpha$ positive or negative?
+3. What does a larger value of $\alpha$ mean?
+4. What would happen to $\alpha$ if the stump had an error of exactly 50%?
 
 ---
 
@@ -242,9 +242,9 @@ $$
 
 where:
 
-* \(y_i\) is the true label,
-* \(h(x_i)\) is the stump's prediction,
-* \(\alpha\) is the stump's weight.
+* $y_i$ is the true label,
+* $h(x_i)$ is the stump's prediction,
+* $\alpha$ is the stump's weight.
 
 If the prediction is correct:
 
@@ -386,8 +386,8 @@ $$
 
 where:
 
-* \(h_1,h_2,h_3,\ldots\) are the individual stumps;
-* \(\alpha_1,\alpha_2,\alpha_3,\ldots\) are their weights.
+* $h_1,h_2,h_3,\ldots$ are the individual stumps;
+* $\alpha_1,\alpha_2,\alpha_3,\ldots$ are their weights.
 
 ---
 
@@ -397,9 +397,9 @@ Suppose three stumps produce the following predictions for a new patient:
 
 | Stump   | Prediction | Stump weight |
 | :------ | :--------: | -----------: |
-| \(h_1\) |     +1     |          0.8 |
-| \(h_2\) |     −1     |          0.4 |
-| \(h_3\) |     +1     |          0.3 |
+| $h_1$ |     +1     |          0.8 |
+| $h_2$ |     -1     |          0.4 |
+| $h_3$ |     +1     |          0.3 |
 
 Calculate
 
@@ -411,9 +411,9 @@ $$
 
 ### Questions
 
-1. Calculate \(F(x)\).
+1. Calculate $F(x)$.
 2. What is the final AdaBoost prediction?
-3. Why does \(h_1\) have more influence than \(h_2\)?
+3. Why does $h_1$ have more influence than $h_2$?
 
 ---
 
@@ -470,7 +470,7 @@ $$
 
 For five patients, suppose the observed target values are:
 
-| Patient | Actual target \(y\) | Initial prediction \(F_0(x)\) |
+| Patient | Actual target $y$ | Initial prediction $F_0(x)$ |
 | :-----: | ------------------: | ----------------------------: |
 |    1    |                 0.0 |                           0.5 |
 |    2    |                 1.0 |                           0.5 |
@@ -516,7 +516,7 @@ F_1(x)=F_0(x)+\eta h_1(x)
 }
 $$
 
-where \(\eta\) is the **learning rate**.
+where $\eta$ is the **learning rate**.
 
 For this exercise, assume
 
@@ -549,7 +549,7 @@ Complete the comparison table.
 
 1. In your own words, explain the difference between **a stump** and an **ensemble of stumps**.
 2. Explain why AdaBoost changes the weights of training examples.
-3. Explain how the stump's \(\alpha\) determines its influence.
+3. Explain how the stump's $\alpha$ determines its influence.
 4. Explain how gradient boosting uses the errors of the current model.
 5. What is the main conceptual similarity between AdaBoost and gradient boosting?
 6. What is the main conceptual difference?
@@ -571,7 +571,7 @@ AdaBoost repeatedly:
 1. Starts with equal patient weights.
 2. Trains a weak learner.
 3. Measures its weighted error.
-4. Gives the learner a weight \(\alpha\).
+4. Gives the learner a weight $\alpha$.
 5. Increases the weights of incorrectly classified patients.
 6. Trains another learner that focuses more on difficult cases.
 7. Combines the learners using their weights.

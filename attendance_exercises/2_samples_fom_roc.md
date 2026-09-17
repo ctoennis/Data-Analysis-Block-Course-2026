@@ -4,8 +4,8 @@
 
 By the end of this exercise, you should be able to:
 
-* Calculate and interpret the **Gini index** for a set of patients.
-* Understand how changing a **classification threshold** affects the separation between infected and non-infected patients.
+* Calculate and interpret the **Gini index** for a data set.
+* Understand how changing a **classification threshold** affects the separation between two signal and background.
 * Calculate **sensitivity** (true-positive rate).
 * Calculate **signal efficiency** and **background efficiency**.
 * Understand the trade-off between signal efficiency and background rejection.
@@ -90,7 +90,7 @@ $$
 
 ### Questions
 
-Using the threshold \(T>37.5^\circ\mathrm{C}\):
+Using the threshold $T>37.5^\circ\mathrm{C}$:
 
 1. Calculate the sensitivity.
 2. Express your answer as a percentage.
@@ -134,7 +134,7 @@ $$
 
 ### Questions
 
-For the threshold \(T>37.5^\circ\mathrm{C}\):
+For the threshold $T>37.5^\circ\mathrm{C}$:
 
 1. Calculate the signal efficiency.
 2. Calculate the background efficiency.
@@ -157,9 +157,9 @@ $$
 
 where:
 
-* \(p_S\) is the fraction of patients who are signal,
-* \(p_B\) is the fraction of patients who are background,
-* \(p_S+p_B=1\).
+* $p_S$ is the fraction of patients who are signal,
+* $p_B$ is the fraction of patients who are background,
+* $p_S+p_B=1$.
 
 A sample containing only one class has
 
@@ -177,15 +177,15 @@ $$
 
 Consider **all 10 patients together**.
 
-1. What is \(p_S\)?
-2. What is \(p_B\)?
+1. What is $p_S$?
+2. What is $p_B$?
 3. Calculate the Gini index.
 
-Now consider the patients classified as **positive** using \(T>37.5^\circ\mathrm{C}\).
+Now consider the patients classified as **positive** using $T>37.5^\circ\mathrm{C}$.
 
 4. How many signal patients are in this group?
 5. How many background patients are in this group?
-6. Calculate \(p_S\) and \(p_B\) for this group.
+6. Calculate $p_S$ and $p_B$ for this group.
 7. Calculate its Gini index.
 
 Finally, consider the patients classified as **negative**.
@@ -198,17 +198,9 @@ Finally, consider the patients classified as **negative**.
 
 ## Part 5 — Investigating the threshold
 
-The choice of \(37.5^\circ\mathrm{C}\) was arbitrary. Let's see what happens when we change it.
+The choice of $37.5^\circ\mathrm{C}$ was arbitrary. Let's see what happens when we change it.
 
 Calculate the signal and background efficiencies for several thresholds.
-
-|      Temperature threshold | Signal efficiency | Background efficiency | Signal rejected | Background rejected |
-| -------------------------: | ----------------: | --------------------: | --------------: | ------------------: |
-| \(T>36.5^\circ\mathrm{C}\) |                   |                       |                 |                     |
-| \(T>37.0^\circ\mathrm{C}\) |                   |                       |                 |                     |
-| \(T>37.5^\circ\mathrm{C}\) |                   |                       |                 |                     |
-| \(T>38.0^\circ\mathrm{C}\) |                   |                       |                 |                     |
-| \(T>38.5^\circ\mathrm{C}\) |                   |                       |                 |                     |
 
 ### Questions
 
@@ -225,17 +217,7 @@ Calculate the signal and background efficiencies for several thresholds.
 
 Suppose the hospital wants a diagnostic method that keeps as many infected patients as possible while rejecting as many non-infected patients as possible.
 
-One way of visualizing the performance is to plot
-
-$$
-\text{signal efficiency}
-$$
-
-against
-
-$$
-\text{background efficiency}.
-$$
+One way of visualizing the performance is to plot signal efficiency against background efficiency.
 
 ### Task
 
