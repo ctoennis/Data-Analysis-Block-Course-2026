@@ -1,659 +1,416 @@
-# Exercise: Regularization of Neural Networks
+Here’s a self-contained exercise designed to have students compute **Adam (Adaptive Moment Estimation)** by hand, including the first\- and second-moment estimates, bias correction, and parameter update.
 
-## Learning objectives
+ Exercise: Adaptive Moment Estimation (Adam) Step by Step
 
-By the end of this exercise, you should be able to:
+# Exercise: Adaptive Moment Estimation (Adam)
 
-* Explain what **overtraining (overfitting)** is.
-* Distinguish between **training loss** and **validation loss**.
-* Calculate **binary cross-entropy (BCE)**.
-* Use BCE to monitor whether a neural network is overtraining.
-* Calculate and interpret the **generalization gap**.
-* Explain how **dropout layers** can reduce overfitting.
-* Understand why a model with very low training loss is not necessarily a good model.
+ In this exercise, you will apply the **Adaptive Moment Estimation (Adam)** optimization algorithm to a simple concrete problem. You will calculate each step of Adam by hand and observe how the parameter changes over several iterations.
 
----
+ ## Learning objectives
 
-# Scenario
+ By the end of this exercise, you should be able to:
 
-A neural network is being trained to determine whether a medical image contains a particular condition.
-
-The network performs **binary classification**:
-
-$$
-y =
-\begin{cases}
-1 & \text{condition present}\\
-0 & \text{condition absent}
-\end{cases}
-$$
-
-For each image, the neural network produces a probability:
-
-$$
-0\leq\hat y\leq1.
-$$
-
-For example,
-
-$$
-\hat y=0.90
-$$
-
-means that the network predicts a 90% probability that the condition is present.
-
-We will use a simplified dataset to investigate what happens as the neural network is trained for more and more epochs.
+ - Explain the role of the first and second moments in Adam.
+- Compute the moving averages of gradients and squared gradients.
+- Apply bias correction.
+- Compute an Adam parameter update.
+- Explain why Adam's update is different from ordinary gradient descent.
 
 ---
 
-# Part 1 — Predictions and classification
+ ## 1\. The problem
 
-Suppose the network makes the following predictions for 10 images.
+ Suppose we want to minimize the following function:
 
-| Image | True label $y$ | Predicted probability $\hat y$ |
-| :---: | :--------------: | -------------------------------: |
-|   1   |         1        |                             0.90 |
-|   2   |         0        |                             0.10 |
-|   3   |         1        |                             0.80 |
-|   4   |         0        |                             0.30 |
-|   5   |         1        |                             0.60 |
-|   6   |         0        |                             0.20 |
-|   7   |         0        |                             0.40 |
-|   8   |         1        |                             0.75 |
-|   9   |         0        |                             0.15 |
-|   10  |         1        |                             0.45 |
-
-Use the decision rule:
-
-$$
-\hat y\geq0.5
-\Rightarrow \text{class 1}
+ $$
+f(x) = (x-3)^2
 $$
 
-$$
-\hat y<0.5
-\Rightarrow \text{class 0}.
-$$
+ The minimum occurs at
 
-### Questions
-
-1. Which images are classified as class 1?
-2. Which images are classified as class 0?
-3. Which images are classified incorrectly?
-4. Calculate the classification accuracy.
-5. Is accuracy enough to determine whether the network is overtraining? Explain.
-
----
-
-# Part 2 — Binary cross-entropy
-
-Accuracy does not take the **confidence** of the network into account.
-
-Consider two predictions for an example whose true class is 1:
-
-$$
-\hat y=0.51
+ $$
+x^* = 3.
 $$
 
-and
+ The derivative is
 
-$$
-\hat y=0.99.
-$$
-
-Both predictions result in class 1, but the second prediction is much more confident.
-
-Binary cross-entropy measures the quality of the predicted probabilities.
-
-For one example:
-
-$$
-\boxed{
-L_{\mathrm{BCE}}
-=
--\left[
-y\log(\hat y)
-+
-(1-y)\log(1-\hat y)
-\right]
-}
+ $$
+\frac{df}{dx} = 2(x-3).
 $$
 
-For $y=1\):
+ We will use **Adam** to find the minimum.
 
-$$
-L_{\mathrm{BCE}}=-\log(\hat y)
-$$
+ Assume the following Adam hyperparameters:
 
-For $y=0\):
-
-$$
-L_{\mathrm{BCE}}=-\log(1-\hat y).
+ $$
+\alpha = 0.1
 $$
 
-### Questions
-
-Calculate the BCE for each case.
-
-### Case A
-
-$$
-y=1,\qquad \hat y=0.9
+ $$
+\beta_1 = 0.9
 $$
 
-### Case B
-
-$$
-y=1,\qquad \hat y=0.51
+ $$
+\beta_2 = 0.999
 $$
 
-### Case C
-
-$$
-y=0,\qquad \hat y=0.1
+ $$
+\epsilon = 10^{-8}.
 $$
 
-### Case D
+ We start with
 
-$$
-y=0,\qquad \hat y=0.9
-$$
-
-Use natural logarithms.
-
-Then answer:
-
-1. Which prediction has the lowest BCE?
-2. Which prediction has the highest BCE?
-3. Why is a confidently wrong prediction penalized strongly?
-4. Why can BCE provide information that accuracy does not?
-
----
-
-# Part 3 — Average binary cross-entropy
-
-The BCE for a dataset is calculated as the mean of the individual losses:
-
-$$
-\boxed{
-L_{\mathrm{BCE}}
-=
-\frac{1}{N}
-\sum_{i=1}^{N}L_i
-}
+ $$
+x_0 = 0.
 $$
 
-Consider the following predictions:
+ Initially, Adam's first- and second-moment estimates are both zero:
 
-| Example | $y\) | $\hat y$ |
-| :-----: | :---: | ---------: |
-|    1    |   1   |       0.90 |
-|    2    |   0   |       0.10 |
-|    3    |   1   |       0.80 |
-|    4    |   0   |       0.30 |
-|    5    |   1   |       0.60 |
-
-### Questions
-
-1. Calculate the BCE for each example.
-2. Calculate the average BCE.
-3. Which example contributes the most to the total loss?
-4. Why does BCE penalize the prediction in example 5 more than the prediction in example 1, even though both are classified correctly?
-
----
-
-# Part 4 — Training versus validation data
-
-When training a neural network, the available data is normally divided into different sets.
-
-### Training set
-
-The network uses these examples to update its weights.
-
-### Validation set
-
-These examples are not used to update the weights. They are used to monitor how well the model generalizes to unseen data during development.
-
-Suppose we train a neural network for 10 epochs and obtain:
-
-| Epoch | Training BCE | Validation BCE |
-| ----: | -----------: | -------------: |
-|     1 |         0.69 |           0.70 |
-|     2 |         0.55 |           0.58 |
-|     3 |         0.43 |           0.47 |
-|     4 |         0.34 |           0.39 |
-|     5 |         0.27 |           0.34 |
-|     6 |         0.20 |           0.31 |
-|     7 |         0.14 |           0.32 |
-|     8 |         0.09 |           0.36 |
-|     9 |         0.05 |           0.42 |
-|    10 |         0.02 |           0.50 |
-
-### Questions
-
-1. What happens to the training BCE as training progresses?
-2. What happens to the validation BCE?
-3. At which epoch is the validation BCE lowest?
-4. After which epoch does the validation BCE start increasing?
-5. What happens to the training BCE after this point?
-6. Is the network still learning the training data?
-7. Is it improving on unseen data?
-8. What does this tell you about overtraining?
-
----
-
-# Part 5 — What is overtraining?
-
-A neural network is **overtraining/overfitting** when it starts to learn details that are specific to the training data rather than patterns that generalize well to new data.
-
-A typical pattern is:
-
-$$
-\boxed{
-L_{\text{training}}\downarrow
-}
+ $$
+m_0 = 0,
+\qquad
+v_0 = 0.
 $$
 
-while
+ Recall the Adam update rules:
 
+ ### Step 1: Compute the gradient
+
+ $$
+g_t = \nabla f(x_{t-1})
 $$
-\boxed{
-L_{\text{validation}}\uparrow
-}
+
+ ### Step 2: Update the first moment
+
+ $$
+m_t = \beta_1m_{t-1} + (1-\beta_1)g_t
 $$
 
-In other words, the network continues getting better on the examples it has seen while getting worse on examples it has not seen.
+ ### Step 3: Update the second moment
 
-### Questions
-
-1. Why can training BCE continue to decrease while validation BCE increases?
-2. What might the network be learning during this stage?
-3. Why is a very small training BCE not necessarily desirable?
-4. Which epoch in Part 4 would be a reasonable point to stop training?
-5. What would happen if training continued to epoch 20 or 50?
-
----
-
-# Part 6 — Generalization gap
-
-The **generalization gap** measures the difference between the training loss and validation loss.
-
-For BCE, define:
-
+ $$
+v_t = \beta_2v_{t-1} + (1-\beta_2)g_t^2
 $$
-\boxed{
-\text{Generalization gap}
-=
-L_{\text{validation}}
+
+ ### Step 4: Correct the bias
+
+ $$
+\hat m_t = \frac{m_t}{1-\beta_1^t}
+$$
+
+ $$
+\hat v_t = \frac{v_t}{1-\beta_2^t}
+$$
+
+ ### Step 5: Update the parameter
+
+ $$
+x_t =
+x_{t-1}
 -
-L_{\text{training}}
-}
+\alpha
+\frac{\hat m_t}
+{\sqrt{\hat v_t}+\epsilon}.
 $$
-
-Consider:
-
-| Epoch | Training BCE | Validation BCE |
-| ----: | -----------: | -------------: |
-|     3 |         0.43 |           0.47 |
-|     5 |         0.27 |           0.34 |
-|     7 |         0.14 |           0.32 |
-|    10 |         0.02 |           0.50 |
-
-### Questions
-
-Calculate the generalization gap at each epoch.
-
-Complete:
-
-| Epoch | Training BCE | Validation BCE | Generalization gap |
-| ----: | -----------: | -------------: | -----------------: |
-|     3 |         0.43 |           0.47 |                    |
-|     5 |         0.27 |           0.34 |                    |
-|     7 |         0.14 |           0.32 |                    |
-|    10 |         0.02 |           0.50 |                    |
-
-Then answer:
-
-1. How does the gap change as training progresses?
-2. At which epoch is the gap largest?
-3. What does a large positive gap suggest?
-4. Why does the gap increase during overtraining?
-5. Can a model have a low training BCE and a large generalization gap?
 
 ---
 
-# Part 7 — Recognizing overtraining from graphs
+ # 2\. Iteration 1 — Guided calculation
 
-Imagine that the following graph shows the training and validation BCE.
+ We begin with
 
-```text
-BCE
- ^
- |\
- | \
- |  \
- |   \ Training
- |    \________________
- |
- |\
- | \
- |  \____
- |       \__
- |          \___
- |              \__
- |                 /
- |                /
- |               /
- |              /
- |             / Validation
- +----------------------------> Epoch
-```
+ $$
+x_0=0.
+$$
 
-### Questions
+ ### Question 1: Compute the gradient
 
-1. Which curve represents training BCE?
-2. Which curve represents validation BCE?
-3. What happens to training BCE throughout training?
-4. What happens to validation BCE initially?
-5. What happens to validation BCE later?
-6. At what point does overtraining appear to begin?
-7. How could you use this graph to decide when to stop training?
+ Calculate
+
+ $$
+g_1 = 2(x_0-3).
+$$
+
+ **Your answer:**
+
+ $$
+g_1 = \boxed{\phantom{000}}
+$$
 
 ---
 
-# Part 8 — Introducing dropout
+ ### Question 2: Compute the first moment
 
-One way of reducing overfitting is **dropout**.
+ Using
 
-A dropout layer randomly disables a fraction of the neurons in a neural network during training.
-
-For example, suppose a layer has six neurons:
-
-```text
-Before dropout:
-
-x  x  x  x  x  x
-
-After dropout:
-
-x  o  x  o  x  x
-```
-
-The neurons represented by `o` are temporarily disabled during that training step.
-
-Suppose the dropout rate is:
-
-$$
-p=0.5.
+ $$
+m_1 = 0.9m_0 + 0.1g_1,
 $$
 
-Approximately 50% of the neurons are randomly disabled during each training step.
+ calculate $m_1$.
 
-> During inference/testing, dropout is not applied in the same way; the full network is used with the appropriate scaling handled by the neural-network framework.
+ **Your answer:**
 
-### Questions
-
-1. What does a dropout layer do?
-2. Why does randomly removing neurons make the network less dependent on particular neurons?
-3. How could this reduce overfitting?
-4. Why are different neurons randomly dropped during different training steps?
-5. What might happen if the dropout rate is too low?
-6. What might happen if the dropout rate is too high?
+ $$
+m_1 = \boxed{\phantom{000}}
+$$
 
 ---
 
-# Part 9 — Dropout calculation
+ ### Question 3: Compute the second moment
 
-Suppose a hidden layer contains 20 neurons.
+ Using
 
-The dropout rate is:
-
-$$
-p=0.3.
+ $$
+v_1 = 0.999v_0 + 0.001g_1^2,
 $$
 
-### Questions
+ calculate $v_1$.
 
-1. How many neurons are expected to be dropped during a training step?
-2. Approximately how many remain active?
-3. Will exactly the same neurons be dropped in the next training step?
-4. What would happen if the dropout rate were increased to 0.7?
-5. Why might an extremely high dropout rate cause underfitting?
+ **Your answer:**
+
+ $$
+v_1 = \boxed{\phantom{000}}
+$$
 
 ---
 
-# Part 10 — Comparing networks
+ ### Question 4: Apply bias correction
 
-Two neural networks are trained on the same dataset.
+ Because this is the first iteration,
 
-### Network A — No dropout
+ $$
+\hat m_1 =
+\frac{m_1}{1-0.9^1}.
+$$
 
-| Epoch | Training BCE | Validation BCE |
-| ----: | -----------: | -------------: |
-|     1 |         0.68 |           0.69 |
-|     2 |         0.50 |           0.53 |
-|     3 |         0.35 |           0.40 |
-|     4 |         0.23 |           0.34 |
-|     5 |         0.14 |           0.32 |
-|     6 |         0.08 |           0.35 |
-|     7 |         0.04 |           0.41 |
-|     8 |         0.02 |           0.48 |
+ Calculate $\hat m_1$.
 
-### Network B — With dropout
+ Then calculate
 
-| Epoch | Training BCE | Validation BCE |
-| ----: | -----------: | -------------: |
-|     1 |         0.70 |           0.71 |
-|     2 |         0.59 |           0.61 |
-|     3 |         0.49 |           0.51 |
-|     4 |         0.41 |           0.44 |
-|     5 |         0.35 |           0.39 |
-|     6 |         0.30 |           0.36 |
-|     7 |         0.27 |           0.35 |
-|     8 |         0.25 |           0.35 |
+ $$
+\hat v_1 =
+\frac{v_1}{1-0.999^1}.
+$$
 
-### Questions
+ **Your answers:**
 
-1. Which network has the lower training BCE at epoch 8?
-2. Which network has the lower validation BCE at epoch 8?
-3. Calculate the generalization gap for both networks at epoch 8.
-4. Which network shows stronger evidence of overfitting?
-5. Why might the dropout network have a higher training BCE?
-6. Why can a higher training BCE nevertheless be associated with better validation performance?
-7. What does this example demonstrate about the purpose of regularization?
+ $$
+\hat m_1 = \boxed{\phantom{000}}
+$$
+
+ $$
+\hat v_1 = \boxed{\phantom{000}}
+$$
 
 ---
 
-# Part 11 — Early stopping
+ ### Question 5: Update $x$
 
-Another method for controlling overtraining is **early stopping**.
+ Finally, calculate
 
-Suppose validation BCE reaches its minimum at epoch 6:
-
+ $$
+x_1 =
+x_0 -
+0.1
+\frac{\hat m_1}
+{\sqrt{\hat v_1}+10^{-8}}.
 $$
-L_{\text{validation}}=0.31.
+
+ **Your answer:**
+
+ $$
+x_1 \approx \boxed{\phantom{000}}
 $$
-
-After this point, validation BCE begins to increase.
-
-### Questions
-
-1. What is the basic idea behind early stopping?
-2. At which epoch would you stop training in the example from Part 4?
-3. Why would continuing to epoch 10 be undesirable?
-4. How is early stopping different from dropout?
-5. Could dropout and early stopping be used together?
 
 ---
 
-# Part 12 — Interpreting different models
+ # 3\. Iteration 2 — Work it out yourself
 
-Consider three models:
+ You should now have a value for $x_1$.
 
-### Model A
+ Repeat the same five steps.
 
-$$
-L_{\text{training}}=0.60
-$$
+ ### Step 1: Gradient
 
-$$
-L_{\text{validation}}=0.62
+ $$
+g_2 = 2(x_1-3)
 $$
 
-### Model B
-
-$$
-L_{\text{training}}=0.20
+ $$
+g_2 = \boxed{\phantom{000}}
 $$
 
-$$
-L_{\text{validation}}=0.23
-$$
+ ### Step 2: First moment
 
-### Model C
-
-$$
-L_{\text{training}}=0.01
+ $$
+m_2 = 0.9m_1+0.1g_2
 $$
 
+ $$
+m_2 = \boxed{\phantom{000}}
 $$
-L_{\text{validation}}=0.45
+
+ ### Step 3: Second moment
+
+ $$
+v_2 = 0.999v_1+0.001g_2^2
 $$
 
-### Questions
+ $$
+v_2 = \boxed{\phantom{000}}
+$$
 
-For each model:
+ ### Step 4: Bias correction
 
-1. Calculate the generalization gap.
-2. Which model appears to be underfitting?
-3. Which model appears to generalize well?
-4. Which model shows strong evidence of overfitting?
-5. Why is Model C's very low training BCE misleading?
+ $$
+\hat m_2 =
+\frac{m_2}{1-0.9^2}
+$$
+
+ $$
+\hat v_2 =
+\frac{v_2}{1-0.999^2}
+$$
+
+ Calculate:
+
+ $$
+\hat m_2 = \boxed{\phantom{000}}
+$$
+
+ $$
+\hat v_2 = \boxed{\phantom{000}}
+$$
+
+ ### Step 5: Parameter update
+
+ $$
+x_2 =
+x_1 -
+0.1
+\frac{\hat m_2}
+{\sqrt{\hat v_2}+10^{-8}}
+$$
+
+ Therefore,
+
+ $$
+x_2 = \boxed{\phantom{000}}
+$$
 
 ---
 
-# Part 13 — A practical regularization problem
+ # 4\. Iteration 3
 
-You train a neural network and obtain the following results:
+ Now perform the calculation for a third iteration without the intermediate hints.
 
-| Model | Dropout rate | Training BCE | Validation BCE |
-| :---- | -----------: | -----------: | -------------: |
-| A     |          0.0 |         0.03 |           0.45 |
-| B     |          0.2 |         0.12 |           0.28 |
-| C     |          0.5 |         0.25 |           0.30 |
-| D     |          0.8 |         0.50 |           0.49 |
+ Complete the following table.
 
-### Questions
+ | Quantity | Iteration 3 |
+| --- | --- |
+| $x_2$ |  |
+| $g_3$ |  |
+| $m_3$ |  |
+| $v_3$ |  |
+| $\hat m_3$ |  |
+| $\hat v_3$ |  |
+| $x_3$ |  |
 
-1. Calculate the generalization gap for each model.
-2. What does Model A's result suggest?
-3. What does Model D's result suggest?
-4. Why can too much dropout be harmful?
-5. Explain why regularization involves finding a balance between fitting the training data and generalizing to new data.
+Use:
+
+ $$
+g_3 = 2(x_2-3)
+$$
+
+ $$
+m_3 = 0.9m_2+0.1g_3
+$$
+
+ $$
+v_3 = 0.999v_2+0.001g_3^2
+$$
+
+ $$
+\hat m_3=\frac{m_3}{1-0.9^3}
+$$
+
+ $$
+\hat v_3=\frac{v_3}{1-0.999^3}
+$$
+
+ and
+
+ $$
+x_3 =
+x_2 -
+0.1
+\frac{\hat m_3}
+{\sqrt{\hat v_3}+10^{-8}}.
+$$
 
 ---
 
-# Part 14 — Final challenge
+ # 5\. Understanding what Adam is doing
 
-Imagine that you are training a neural network.
+ Answer the following conceptual questions.
 
-Initially:
+ ### Question 6
 
-$$
-L_{\text{training}}\approx
-L_{\text{validation}}.
-$$
+ What does $m_t$ represent?
 
-After several epochs:
+ Choose the best description:
 
-$$
-L_{\text{training}}\downarrow
-$$
+ - [ ] The average of the parameters seen so far.
+- [ ] An exponentially weighted moving average of the gradients.
+- [ ] An exponentially weighted moving average of the squared parameters.
+- [ ] The learning rate.
 
-and
-
-$$
-L_{\text{validation}}\downarrow.
-$$
-
-Eventually:
-
-$$
-L_{\text{training}}\downarrow
-$$
-
-but
-
-$$
-L_{\text{validation}}\uparrow.
-$$
-
-### Questions
-
-1. What is happening during the first phase of training?
-2. What happens when the validation loss begins to increase?
-3. Why is this considered evidence of overtraining?
-4. How would the generalization gap change?
-5. How could early stopping help?
-6. How could dropout help?
-7. Why might dropout cause training BCE to increase?
-8. Why can this still be a desirable result?
-9. What should ultimately matter when choosing a model: the lowest training BCE or good performance on unseen data? Explain.
+ Explain your answer in one or two sentences.
 
 ---
 
-# Summary
+ ### Question 7
 
-Complete the following statements.
+ What does $v_t$ represent?
 
-1. **Binary cross-entropy** measures the difference between the true binary labels and the predicted __________.
-
-2. A neural network is likely to be **overtraining** when training loss continues to __________ while validation loss begins to __________.
-
-3. The generalization gap is:
-
-$$
-\boxed{
-\text{Validation loss}-
-\text{Training loss}
-}
-$$
-
-4. A large positive generalization gap can be evidence of __________.
-
-5. **Dropout** randomly __________ neurons during training.
-
-6. Dropout is a form of __________ used to reduce overfitting.
-
-7. **Early stopping** can prevent a model from training beyond the point where validation performance begins to __________.
-
-8. The ultimate goal of training is not to memorize the training set, but to __________ well to unseen data.
+ - [ ] An exponentially weighted moving average of the gradients.
+- [ ] An exponentially weighted moving average of the squared gradients.
+- [ ] The current value of the objective function.
+- [ ] The accumulated parameter updates.
 
 ---
 
-# Key idea
+ ### Question 8
 
-A well-trained neural network is not necessarily the network with the smallest training BCE.
+ Why does Adam use $g_t^2$ when calculating $v_t$?
 
-The central goal is:
+ Consider what happens if a gradient is large in magnitude. How would this affect $v_t$ and, consequently, the size of the parameter update?
 
-$$
-\boxed{
-\text{Good performance on unseen data}
-}
-$$
+---
 
-Regularization techniques such as **dropout** and **early stopping** help prevent the neural network from learning the training data too specifically.
+ ### Question 9
 
-The characteristic warning sign of overtraining is:
+ Why are the bias-correction terms
 
-$$
-\boxed{
-\text{Training BCE decreases}
-\quad\text{while}\quad
-\text{Validation BCE increases}
-}
+ $$
+1-\beta_1^t
 $$
 
-This is accompanied by an increasing **generalization gap**.
+ and
+
+ $$
+1-\beta_2^t
+$$
+
+ necessary?
+
+ **Hint:** Think about the fact that
+
+ $$
+m_0=v_0=0.
+$$
+
+---
+
 
