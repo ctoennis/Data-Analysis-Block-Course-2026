@@ -14,16 +14,16 @@ Patients predicted positive: **4, 5, 6, 7, 9**
 
 | Patient | Actual | Prediction | Correct? |
 | :-----: | :----: | :--------: | :------: |
-|    1    |   −1   |     −1     |     ✓    |
-|    2    |   +1   |     −1     |     ✗    |
-|    3    |   +1   |     −1     |     ✗    |
-|    4    |   +1   |     +1     |     ✓    |
-|    5    |   +1   |     +1     |     ✓    |
-|    6    |   +1   |     +1     |     ✓    |
-|    7    |   −1   |     +1     |     ✗    |
-|    8    |   −1   |     −1     |     ✓    |
-|    9    |   +1   |     +1     |     ✓    |
-|    10   |   −1   |     −1     |     ✓    |
+|    1    |   -1   |     -1     |     x    |
+|    2    |   +1   |     -1     |     o    |
+|    3    |   +1   |     -1     |     o    |
+|    4    |   +1   |     +1     |     x    |
+|    5    |   +1   |     +1     |     x    |
+|    6    |   +1   |     +1     |     x    |
+|    7    |   -1   |     +1     |     o    |
+|    8    |   -1   |     -1     |     x    |
+|    9    |   +1   |     +1     |     x    |
+|    10   |   -1   |     -1     |     x    |
 
 There are **3 errors**, so
 
@@ -154,7 +154,7 @@ $$
 
 The value is positive because the stump performs better than random guessing.
 
-A **larger \(\alpha\)** means that the weak learner has a smaller error and therefore receives more influence in the final ensemble.
+A **larger $\alpha$** means that the weak learner has a smaller error and therefore receives more influence in the final ensemble.
 
 If
 
@@ -212,16 +212,16 @@ Thus the unnormalized weights are:
 
 | Patient | Correct? | Unnormalized weight |
 | :-----: | :------: | ------------------: |
-|    1    |     ✓    |                0.05 |
-|    2    |     ✗    |                0.20 |
-|    3    |     ✓    |                0.05 |
-|    4    |     ✗    |                0.20 |
-|    5    |     ✓    |                0.05 |
-|    6    |     ✓    |                0.05 |
-|    7    |     ✓    |                0.05 |
-|    8    |     ✓    |                0.05 |
-|    9    |     ✓    |                0.05 |
-|    10   |     ✓    |                0.05 |
+|    1    |     x    |                0.05 |
+|    2    |     o    |                0.20 |
+|    3    |     x    |                0.05 |
+|    4    |     o    |                0.20 |
+|    5    |     x    |                0.05 |
+|    6    |     x    |                0.05 |
+|    7    |     x    |                0.05 |
+|    8    |     x    |                0.05 |
+|    9    |     x    |                0.05 |
+|    10   |     x    |                0.05 |
 
 The sum is
 
@@ -387,9 +387,9 @@ Suppose three stumps make the following predictions:
 
 | Stump   | Prediction | Weight |
 | :------ | :--------: | -----: |
-| \(h_1\) |     +1     |    0.8 |
-| \(h_2\) |     −1     |    0.4 |
-| \(h_3\) |     +1     |    0.3 |
+| $h_1$ |     +1     |    0.8 |
+| $h_2$ |     -1     |    0.4 |
+| $h_3$ |     +1     |    0.3 |
 
 The combined score is
 
@@ -421,7 +421,7 @@ $$
 
 so the final model predicts **heart disease**.
 
-Stump \(h_1\) has the largest influence because it has the largest \(\alpha\).
+Stump $h_1$ has the largest influence because it has the largest $\alpha$.
 
 ---
 
@@ -473,12 +473,12 @@ $$
 
 ### Residuals
 
-| Patient | Actual \(y\) | Prediction \(F_0\) | Residual \(r=y-F_0\) |
+| Patient | Actual $y$ | Prediction $F_0$ | Residual $r=y-F_0$ |
 | :-----: | -----------: | -----------------: | -------------------: |
-|    1    |          0.0 |                0.5 |                 −0.5 |
+|    1    |          0.0 |                0.5 |                 -0.5 |
 |    2    |          1.0 |                0.5 |                 +0.5 |
 |    3    |          1.0 |                0.5 |                 +0.5 |
-|    4    |          0.0 |                0.5 |                 −0.5 |
+|    4    |          0.0 |                0.5 |                 -0.5 |
 |    5    |          1.0 |                0.5 |                 +0.5 |
 
 Therefore:
@@ -603,7 +603,7 @@ The model gradually becomes more sophisticated.
 | Basic building block            | Weak learners such as stumps                       | Usually shallow decision trees                                               |
 | What happens after an error?    | Misclassified examples receive larger weights      | The next learner focuses on the current model's residuals/negative gradients |
 | How is the next learner guided? | By the updated example weights                     | By the gradient of the loss function                                         |
-| How are learners combined?      | Weighted sum/vote using \(\alpha\)                 | Sequentially added to the existing model                                     |
+| How are learners combined?      | Weighted sum/vote using $\alpha$                 | Sequentially added to the existing model                                     |
 | Main idea                       | Focus more strongly on difficult training examples | Add models that correct the current model's errors                           |
 
 ---
@@ -626,14 +626,14 @@ The next stump therefore concentrates more on the cases that previous stumps str
 
 ---
 
-### 3. How does \(\alpha\) determine a stump's influence?
+### 3. How does $\alpha$ determine a stump's influence?
 
 $$
 \alpha=
 \frac12\ln\left(\frac{1-\epsilon}{\epsilon}\right)
 $$
 
-A stump with a smaller error \(\epsilon\) receives a larger \(\alpha\), giving it greater influence in the final prediction.
+A stump with a smaller error $\epsilon$ receives a larger $\alpha$, giving it greater influence in the final prediction.
 
 ---
 

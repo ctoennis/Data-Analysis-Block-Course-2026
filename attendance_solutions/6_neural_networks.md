@@ -2,7 +2,7 @@
 
 ## Part 1 — Predictions and classification
 
-Using the threshold \(\hat y\geq0.5\):
+Using the threshold $\hat y\geq0.5$:
 
 * Class 1: images **1, 3, 5, 8**
 * Class 0: images **2, 4, 6, 7, 9, 10**
@@ -24,7 +24,7 @@ $$
 L=-[y\log(\hat y)+(1-y)\log(1-\hat y)]
 $$
 
-| Case | \(y\) | \(\hat y\) |       BCE |
+| Case | $y$ | $\hat y$ |       BCE |
 | :--- | ----: | ---------: | --------: |
 | A    |     1 |       0.90 | **0.105** |
 | B    |     1 |       0.51 | **0.673** |
@@ -42,7 +42,7 @@ $$
 
 Approximate individual losses:
 
-| Example | \(y\) | \(\hat y\) |   BCE |
+| Example | $y$ | $\hat y$ |   BCE |
 | :-----: | ----: | ---------: | ----: |
 |    1    |     1 |       0.90 | 0.105 |
 |    2    |     0 |       0.10 | 0.105 |
@@ -163,7 +163,7 @@ $$
 
 A new random set of neurons is normally dropped at the next training step.
 
-With \(p=0.7\):
+With $p=0.7$:
 
 $$
 20(0.7)=\boxed{14}
@@ -258,7 +258,7 @@ Model C's extremely low training BCE is misleading because its validation loss i
 | A     |     0.0 |         0.03 |           0.45 |           **0.42** |
 | B     |     0.2 |         0.12 |           0.28 |           **0.16** |
 | C     |     0.5 |         0.25 |           0.30 |           **0.05** |
-| D     |     0.8 |         0.50 |           0.49 |          **−0.01** |
+| D     |     0.8 |         0.50 |           0.49 |          **-0.01** |
 
 Interpretation:
 
@@ -318,7 +318,7 @@ Dropout can increase training BCE while improving validation performance. This i
 | BCE compares true labels with predicted | **probabilities**                      |
 | During overtraining, training loss      | **decreases**                          |
 | During overtraining, validation loss    | **increases**                          |
-| Generalization gap                      | **Validation loss − Training loss**    |
+| Generalization gap                      | **Validation loss - Training loss**    |
 | Large positive gap can indicate         | **overfitting**                        |
 | Dropout randomly                        | **disables/drops neurons**             |
 | Dropout is a form of                    | **regularization**                     |

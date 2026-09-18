@@ -1,6 +1,6 @@
 # Answer Key
 
-## Part 1 — Threshold \(T>37.5^\circ\mathrm{C}\)
+## Part 1 — Threshold $T>37.5^\circ\mathrm{C}$
 
 Positive: patients **6, 7, 8, 9, 10**.
 
@@ -97,11 +97,11 @@ A **lower Gini index means the group is more pure**, i.e. it contains predominan
 
 |                  Threshold | Signal efficiency | Background efficiency | Signal rejected | Background rejected |
 | -------------------------: | ----------------: | --------------------: | --------------: | ------------------: |
-| \(T>36.5^\circ\mathrm{C}\) |              100% |                   80% |              0% |                 20% |
-| \(T>37.0^\circ\mathrm{C}\) |              100% |                   60% |              0% |                 40% |
-| \(T>37.5^\circ\mathrm{C}\) |               80% |                   20% |             20% |                 80% |
-| \(T>38.0^\circ\mathrm{C}\) |               40% |                   20% |             60% |                 80% |
-| \(T>38.5^\circ\mathrm{C}\) |               20% |                    0% |             80% |                100% |
+| $T>36.5^\circ\mathrm{C}$ |              100% |                   80% |              0% |                 20% |
+| $T>37.0^\circ\mathrm{C}$ |              100% |                   60% |              0% |                 40% |
+| $T>37.5^\circ\mathrm{C}$ |               80% |                   20% |             20% |                 80% |
+| $T>38.0^\circ\mathrm{C}$ |               40% |                   20% |             60% |                 80% |
+| $T>38.5^\circ\mathrm{C}$ |               20% |                    0% |             80% |                100% |
 
 As the threshold increases, **both signal efficiency and background efficiency generally decrease**. A higher threshold rejects more patients, including both background and, eventually, signal.
 

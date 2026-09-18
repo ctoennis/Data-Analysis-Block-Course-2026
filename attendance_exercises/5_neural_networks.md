@@ -785,9 +785,9 @@ Which network is closer to the true function at these points? Why can two networ
 Determine the output of the deeper network in the following regions:
 
 1. $x<0$
-2. 0\leq x<1
-3. 1\leq x<2
-4. x\geq2
+2. $0\leq x<1$
+3. $1\leq x<2$
+4. $x\geq2$
 
 Write the result as a piecewise function
 
