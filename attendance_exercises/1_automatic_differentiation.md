@@ -20,7 +20,9 @@ The calculations in this sheet are designed to be done **by hand**. No programmi
 
 ## 1. What are dual numbers?
 
-A dual number $\hat{x}$ has the form
+Automatic differentiation (AD) computes derivatives by applying the chain rule to the elementary operations of a calculation. For a composition, the chain rule gives $(f\circ q)'(x)=f'(q(x))q'(x)$.
+
+A **dual number** $\hat{x}$ has the form
 
 $$
 \hat{x} = x + \dot{x}\varepsilon
@@ -34,7 +36,9 @@ $$
 \varepsilon \neq 0
 $$
 
-If we then evaluate a differentiable function $f$ using the usual arithmetic rules together (think Taylor series) with $\varepsilon^2=0$, we obtain
+The ordinary value $x$ is called the **primal value**. The coefficient $\dot{x}$ is the **tangent**: it tracks the derivative along a chosen input direction. The dot is notation for this derivative component, not necessarily a time derivative. Choosing the initial tangent is called setting an **input seed**. **Forward mode** carries primal values and tangents together from inputs to outputs.
+
+If we then evaluate a differentiable function $f$ using its value and first derivative for each elementary operation together with $\varepsilon^2=0$, we obtain
 
 $$
 f(x+\dot{x}\varepsilon)
@@ -87,6 +91,8 @@ which is exactly the product rule.
 
 ### Some useful elementary functions
 
+Here $\log$ denotes the natural logarithm.
+
 $$
 \exp(a+\dot{a}\varepsilon)
 = e^a+\dot{a}\,e^a\varepsilon,
@@ -98,7 +104,7 @@ $$
 $$
 
 $$
-\log(a+a'\varepsilon)
+\log(a+\dot{a}\varepsilon)
 = \log(a)+\frac{\dot{a}}{a}\varepsilon,
 \qquad a>0,
 $$
@@ -163,6 +169,8 @@ The important point is that the value and the derivative were propagated at the 
 
 ## 4. More than one input
 
+A scalar is a single number; a vector is an ordered collection of numbers. Vectors are written as column vectors, and $T$ denotes transposition.
+
 Suppose now that
 
 $$
@@ -185,15 +193,15 @@ $$
 }
 $$
 
-where $J_g$ is the Jacobian matrix.
+The **Jacobian matrix** $J_g(\mathbf{x})$ collects all first partial derivatives: its entry in row $i$ and column $j$ is $\partial g_i/\partial x_j$. A **partial derivative** measures the change with respect to one input while holding the others fixed. For $n$ inputs and $m$ outputs, the Jacobian has $m$ rows and $n$ columns.
 
-Therefore, one forward-mode sweep computes one Jacobian-vector product
+A **sweep** is one traversal of the calculation in the chosen direction. One forward-mode sweep computes one **Jacobian-vector product (JVP)**
 
 $$
 J_g(\mathbf{x})\dot{\mathbf{x}}.
 $$
 
-If we choose $\dot{\mathbf{x}}$ to be a standard basis vector, for example
+A **standard basis vector** has one entry equal to $1$ and all other entries equal to $0$. If we choose $\dot{\mathbf{x}}$ to be a standard basis vector, for example
 
 $$
 \mathbf{e}_1=(1,0,0)^T,
@@ -201,11 +209,19 @@ $$
 
 then the tangent part is the first column of the Jacobian.
 
+For a scalar-valued function, the **gradient** $\nabla g$ is the column vector of all partial derivatives. The **directional derivative** along an input direction $\mathbf v$ is
+
+$$
+D_{\mathbf v}g(\mathbf x)=\left.\frac{d}{dt}g(\mathbf x+t\mathbf v)\right|_{t=0}=\nabla g(\mathbf x)^T\mathbf v.
+$$
+
+Here $\mathbf v$ need not have unit length: scaling the seed scales the directional derivative.
+
 ---
 
 # Forward-mode exercises
 
-## Exercise 1 — Scalar input, scalar output
+## Exercise 1.1 — Scalar input, scalar output
 
 Consider
 
@@ -223,7 +239,7 @@ using dual-number propagation.
 
 ---
 
-## Exercise 2 — Vector input, scalar output
+## Exercise 1.2 — Vector input, scalar output
 
 Consider
 
@@ -237,42 +253,41 @@ $$
 (x,y,z)=(1,2,0).
 $$
 
-a.) First calculate the ordinary function value $g(1,2,0)$.
+1. First calculate the ordinary function value $g(1,2,0)$.
 
-b.) Use forward-mode AD with the three seeds
+2. Use forward-mode AD with the three seeds
 
-$$
-\mathbf{e}_x=(1,0,0),
-\qquad
-\mathbf{e}_y=(0,1,0),
-\qquad
-\mathbf{e}_z=(0,0,1)
-$$
+   $$
+   \mathbf{e}_x=(1,0,0),
+   \qquad
+   \mathbf{e}_y=(0,1,0),
+   \qquad
+   \mathbf{e}_z=(0,0,1)
+   $$
 
-to determine the full gradient
+   to determine the full gradient
 
-$$
-\nabla g(1,2,0).
-$$
+   $$
+   \nabla g(1,2,0).
+   $$
 
+3. Now use only one forward sweep with seed direction
 
-c.) Now use only one forward sweep with seed direction
+   $$
+   \dot{\mathbf{x}}=(1,-1,2)^T
+   $$
 
-$$
-\dot{\mathbf{x}}=(1,-1,2)^T
-$$
+   to compute the directional derivative
 
-to compute the directional derivative
-
-$$
-D_{\dot{\mathbf{x}}}g
-=
-\nabla g^T\dot{\mathbf{x}}.
-$$
+   $$
+   D_{\dot{\mathbf{x}}}g
+   =
+   \nabla g^T\dot{\mathbf{x}}.
+   $$
 
 ---
 
-## Exercise 3 — Vector input, vector output
+## Exercise 1.3 — Vector input, vector output
 
 Consider the vector-valued function
 
@@ -296,46 +311,46 @@ $$
 (x,y,z)=(1,0,1).
 $$
 
-a.) Calculate $\mathbf h(1,0,1)$.
+1. Calculate $\mathbf h(1,0,1)$.
 
-b.) Use the three input basis directions
+2. Use the three input basis directions
 
-$$
-\mathbf e_x,
-\qquad
-\mathbf e_y,
-\qquad
-\mathbf e_z
-$$
+   $$
+   \mathbf e_x,
+   \qquad
+   \mathbf e_y,
+   \qquad
+   \mathbf e_z
+   $$
 
-and dual numbers to compute the full Jacobian
+   and dual numbers to compute the full Jacobian
 
-$$
-J_{\mathbf h}
-=
-\begin{pmatrix}
-\frac{\partial h_1}{\partial x} &
-\frac{\partial h_1}{\partial y} &
-\frac{\partial h_1}{\partial z}\\[4pt]
-\frac{\partial h_2}{\partial x} &
-\frac{\partial h_2}{\partial y} &
-\frac{\partial h_2}{\partial z}
-\end{pmatrix}.
-$$
+   $$
+   J_{\mathbf h}
+   =
+   \begin{pmatrix}
+   \frac{\partial h_1}{\partial x} &
+   \frac{\partial h_1}{\partial y} &
+   \frac{\partial h_1}{\partial z}\\[4pt]
+   \frac{\partial h_2}{\partial x} &
+   \frac{\partial h_2}{\partial y} &
+   \frac{\partial h_2}{\partial z}
+   \end{pmatrix}.
+   $$
 
-Remember: each forward sweep gives one column of the Jacobian.
+   Remember: each forward sweep gives one column of the Jacobian.
 
-c.) Use a single forward sweep with
+3. Use a single forward sweep with
 
-$$
-\mathbf v=(1,2,-1)^T
-$$
+   $$
+   \mathbf v=(1,2,-1)^T
+   $$
 
-to compute
+   to compute
 
-$$
-J_{\mathbf h}\dot{\mathbf{x}}
-$$
+   $$
+   J_{\mathbf h}\mathbf v
+   $$
 
 ---
 
@@ -345,13 +360,15 @@ $$
 
 Forward mode propagates derivatives together with the values from input to output.
 
-Reverse mode proceeds differently:
+A **computational graph** represents a calculation as nodes for inputs and intermediate results, with directed edges showing which values each operation uses. An **intermediate variable** stores the result of one of these operations. A **local derivative** is the derivative of an operation's output with respect to one of its inputs.
+
+**Reverse mode** proceeds as follows:
 
 1. Perform an ordinary forward pass and store the intermediate values.
 2. Start from the output.
 3. Propagate sensitivities backwards through the computational graph.
 
-For an intermediate variable $v$, define its adjoint as
+For an intermediate variable $v$, define its **adjoint** (the sensitivity of the chosen scalar output to this variable) as
 
 $$
 \boxed{
@@ -361,7 +378,7 @@ $$
 
 where $L$ is the final scalar output whose derivative we want (the bar notation is common in reverse-mode AD).
 
-The output is initialized with
+Initialize all adjoints to zero. The **output seed** specifies the starting adjoint at the output. For the derivative of the scalar output itself, set
 
 $$
 \bar L
@@ -394,7 +411,7 @@ $$
 \bar b \mathrel{+}= \bar c.
 $$
 
-with $\mathrel{+}=$ the programming operator meaning $\bar a + \bar c$ replaces the initial $\bar a$-assignment: if one variable influences the output through several paths, all contributions to its adjoint must be added.
+**Accumulation**, written $\bar a\mathrel{+}=\bar c$, means replacing $\bar a$ by its current value plus $\bar c$: if one variable influences the output through several paths, all contributions to its adjoint must be added.
 
 ### Multiplication
 
@@ -470,7 +487,7 @@ Start with
 $$
 \bar v_2=1
 $$
-which is the condition $\frac{\partial f}{\partial v_2} \overset{!}{=} 1$.
+because $f=v_2$, so $\partial f/\partial v_2=1$.
 
 Since
 
@@ -526,7 +543,7 @@ $$
 
 with derivatives with respect to all inputs at once.
 
-This is why reverse mode is particularly useful in machine learning: a neural network may have millions of parameters, but the loss is usually a single scalar.
+A loss measures the error of a model’s predictions. In machine learning it is usually a scalar, even when the model has many parameters.
 
 For a vector-valued function
 
@@ -542,7 +559,7 @@ J_{\mathbf f}^T\mathbf w
 }.
 $$
 
-This is called a vector-Jacobian product or, equivalently under row-vector notation, $\mathbf w^TJ$.
+The **vector-Jacobian product (VJP)** is $\mathbf w^TJ_{\mathbf f}$. With column-vector notation, we write its transpose $J_{\mathbf f}^T\mathbf w$. The output seed $\mathbf w$ assigns a starting adjoint to each output; equivalently, we differentiate the scalar $L=\mathbf w^T\mathbf f$.
 
 To reconstruct the complete Jacobian, use one reverse sweep per output basis vector.
 
@@ -552,7 +569,7 @@ To reconstruct the complete Jacobian, use one reverse sweep per output basis vec
 
 Use exactly the same three functions as in the forward-mode section.
 
-## Exercise 1 — Scalar input, scalar output
+## Exercise 2.1 — Scalar input, scalar output
 
 For
 
@@ -564,13 +581,13 @@ at $x=1$:
 
 1. Write the function as a sequence of elementary intermediate variables.
 2. Perform the forward pass and record all intermediate values.
-3. Set the output adjoint equal to $1$.
+3. Initialize all adjoints to zero, then set the output adjoint equal to $1$.
 4. Propagate all adjoints backwards.
 5. Determine $\bar x=f'(1)$.
 
 ---
 
-## Exercise 2 — Three inputs, scalar output
+## Exercise 2.2 — Three inputs, scalar output
 
 For
 
@@ -598,9 +615,16 @@ $$
 d=a+b+c
 $$
 
+The scalar output is $g=d$.
+
+1. Perform the forward pass and record $a,b,c,d$.
+2. Initialize all adjoints to zero, then set $\bar d=1$ and propagate backwards.
+3. Determine the gradient $\nabla g(1,2,0)$ and compare it with Exercise 1.2.
+4. Explain why the adjoint of $y$ receives two contributions.
+
 ---
 
-## Exercise 3 — Three inputs, two outputs
+## Exercise 2.3 — Three inputs, two outputs
 
 For
 
@@ -616,45 +640,45 @@ $$
 
 reverse mode needs an output seed because the output is not scalar.
 
-a.) First output. Use
+1. First output. Use
 
-$$
-\mathbf w_1 = \begin{pmatrix}1\\0\end{pmatrix}.
-$$
+   $$
+   \mathbf w_1 = \begin{pmatrix}1\\0\end{pmatrix}.
+   $$
 
-That is, propagate backwards only from $h_1$.
+   That is, propagate backwards only from $h_1$.
 
-Compute
+   Compute
 
-$$
-J_{\mathbf h}^T\mathbf w_1.
-$$
+   $$
+   J_{\mathbf h}^T\mathbf w_1.
+   $$
 
-b.) Second output. Use
+2. Second output. Use
 
-$$
-\mathbf w_2 = \begin{pmatrix}0\\1\end{pmatrix}
-$$
+   $$
+   \mathbf w_2 = \begin{pmatrix}0\\1\end{pmatrix}
+   $$
 
-Compute
+   Compute
 
-$$
-J_{\mathbf h}^T\mathbf w_2
-$$
+   $$
+   J_{\mathbf h}^T\mathbf w_2
+   $$
 
-c.) Full Jacobian. Use the two results to reconstruct the complete Jacobian.
+3. Full Jacobian. Use the two results to reconstruct the complete Jacobian.
 
-d.) General output seed. Without calculating the Jacobian from scratch, use
+4. General output seed. Without calculating the Jacobian from scratch, use
 
-$$
-\mathbf w = \begin{pmatrix}3\\-1\end{pmatrix}
-$$
+   $$
+   \mathbf w = \begin{pmatrix}3\\-1\end{pmatrix}
+   $$
 
-to calculate
+   to calculate
 
-$$
-J_{\mathbf h}^T\mathbf w
-$$
+   $$
+   J_{\mathbf h}^T\mathbf w
+   $$
 
 ---
 
@@ -697,3 +721,21 @@ $$
 $$
 
 instead of simply assigning one value to $\bar x$?
+
+### Key concepts
+
+| Concept | Meaning in this exercise |
+| --- | --- |
+| **Automatic differentiation (AD)** | Computing derivatives by applying the chain rule to elementary operations. |
+| **Loss** | A scalar measure of how poorly a model fits its target. |
+| **Dual number** | $x+\dot x\varepsilon$, where $\varepsilon\ne0$ and $\varepsilon^2=0$. |
+| **Input seed** | The initial tangent or input direction chosen for a forward sweep. |
+| **Directional derivative** | Rate of change along $\mathbf x+t\mathbf v$; for a scalar output, $\nabla g^T\mathbf v$. |
+| **Jacobian matrix** | Matrix of first partial derivatives, with outputs as rows and inputs as columns. |
+| **Forward mode / JVP** | Propagates values and tangents to compute $J\mathbf v$. |
+| **Sweep / pass** | One traversal of the calculation in a given direction. |
+| **Computational graph** | Nodes and directed dependencies representing a calculation. |
+| **Adjoint** | $\bar v=\partial L/\partial v$: sensitivity of the chosen scalar output $L$ to $v$. |
+| **Output seed** | Initial output adjoints; $1$ for a scalar output, or weights $\mathbf w$ for several outputs. |
+| **Reverse mode / VJP** | Propagates adjoints backwards to compute $J^T\mathbf w$, the transpose of $\mathbf w^TJ$. |
+| **Accumulation** | Adding all contributions to an adjoint when a variable affects the output through several paths. |
