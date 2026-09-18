@@ -19,32 +19,38 @@ on:
       - 'attendance_solutions/**.md'
 
 jobs:
-  converttopdf:
-    name: Build PDF
+  build-pdfs:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: baileyjm02/markdown-to-pdf@v1
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Pandoc and LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex texlive-fonts-recommended texlive-latex-extra
+
+      - name: Convert Markdown files to PDF
+        run: |
+          mkdir -p pdf
+
+          find . -type f -name "*.md" \
+            -not -path "./.git/*" \
+            -not -path "./pdf/*" \
+            | while read -r file; do
+
+              output="pdf/$(basename "${file%.md}").pdf"
+
+              pandoc "$file" \
+                --pdf-engine=xelatex \
+                -V geometry:margin=1in \
+                -o "$output"
+
+            done
+
+      - name: Upload PDFs
+        uses: actions/upload-artifact@v4
         with:
-          input_dir: attendance_exercises
-          output_dir: pdfs
-          build_html: false
-      - uses: actions/upload-artifact@v4
-        with:
-          name: attendance_exercises
-          path: pdfs
-  
-  solutionstopdf:
-    name: Build PDF
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: baileyjm02/markdown-to-pdf@v1
-        with:
-          input_dir: attendance_solutions
-          output_dir: pdfs
-          build_html: false
-      - uses: actions/upload-artifact@v4
-        with:
-          name: attendance_solutions
-          path: pdf_solutions
+          name: pdfs
+          path: pdf/
