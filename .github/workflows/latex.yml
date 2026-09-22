@@ -1,0 +1,98 @@
+name: Compile all LaTeX files
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  compile-latex:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            latexmk \
+            texlive-full
+
+      - name: Find and compile all LaTeX files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p build
+
+          mapfile -d '' tex_files < <(
+            find . \
+              -type f \
+              -name '*.tex' \
+              -not -path './.git/*' \
+              -print0
+          )
+
+          if [ "${#tex_files[@]}" -eq 0 ]; then
+            echo "No LaTeX files found."
+            exit 0
+          fi
+
+          failed=0
+
+          for tex_file in "${tex_files[@]}"; do
+            echo ""
+            echo "========================================"
+            echo "Compiling: $tex_file"
+            echo "========================================"
+
+            # Remove leading "./"
+            relative="${tex_file#./}"
+
+            # Put each document's output in its own directory.
+            output_dir="build/$(dirname "$relative")"
+            mkdir -p "$output_dir"
+
+            if latexmk \
+              -pdf \
+              -interaction=nonstopmode \
+              -halt-on-error \
+              -outdir="$output_dir" \
+              "$tex_file"; then
+
+              echo "Successfully compiled: $tex_file"
+            else
+              echo "Failed to compile: $tex_file"
+              failed=1
+            fi
+          done
+
+          exit "$failed"
+
+      - name: List generated PDFs
+        if: always()
+        run: |
+          echo "Generated PDFs:"
+          find build -type f -name '*.pdf' -print
+
+      - name: Upload compiled PDFs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex-pdfs
+          path: build/**/*.pdf
+          if-no-files-found: warn
+
+      - name: Upload compilation logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex-build-logs
+          path: |
+            build/**/*.log
+            build/**/*.aux
+            build/**/*.fls
+            build/**/*.fdb_latexmk
+          if-no-files-found: ignore
