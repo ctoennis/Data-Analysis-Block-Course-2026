@@ -17,3 +17,6 @@ attendance_solutions/[0-9]*.tex
 *.fdb_latexmk
 *.out
 *.synctex.gz
+
+# Generated PDFs and LaTeX build files.
+build/

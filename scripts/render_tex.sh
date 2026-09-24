@@ -24,6 +24,18 @@ else
     solutions=false
 fi
 
+sheet_number="$(basename "$md_file" | sed -E 's/^([0-9]+)_.*/\1/')"
+case "$sheet_number" in
+    1|2) published="25 September 2026" ;;
+    3|4) published="28 September 2026" ;;
+    5|6) published="29 September 2026" ;;
+    7)   published="30 September 2026" ;;
+    *)
+        echo "Cannot determine publication date for $md_file" >&2
+        exit 1
+        ;;
+esac
+
 # Some sheets use ATX ("# Title") headings, others Setext ("Title\n====").
 # Normalize to ATX first so title extraction/removal below is uniform.
 normalized_md="$(mktemp)"
@@ -47,6 +59,7 @@ pandoc "$body_md" \
     --no-highlight \
     --template="$template" \
     -M title="$title" \
+    -M published="$published" \
     -M solutions="$solutions" \
     -o "$out_file"
 

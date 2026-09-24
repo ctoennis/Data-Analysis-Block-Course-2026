@@ -3,6 +3,9 @@ $if(solutions)$
 $endif$
 \documentclass{course_sheet}
 \input{2026-SoSe.tex}
+$if(published)$
+\published{$published$}
+$endif$
 
 % Pandoc emits \tightlist for compact list items; course_sheet.cls does not
 % define it (it uses enumitem, not pandoc's convention), so provide it here.
