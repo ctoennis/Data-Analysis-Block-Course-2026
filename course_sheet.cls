@@ -143,7 +143,7 @@
         % Top section with university info
         \rule{\textwidth}{2pt}\\[0.3em]
         \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcr}
-            \textbf{Ruhr-Universität Bochum} & \textbf{\courseNumber{}} & \textbf{\semester{}} \\
+		\textbf{Ruhr-Universität Bochum} & \textbf{160435} & \textbf{SoSe 2026} \\
         \end{tabular*}\\[0.5em]
 
         % Main header section with logos and course info
@@ -156,12 +156,12 @@
             % Center: Course title and instructors
             \begin{minipage}[c]{0.56\textwidth}
                 \centering
-                {\Large\textbf{\courseTitle{}}}\\[0.2em]
+                {\Large\textbf{Data Analysis Block Course: Statistics and Machine learning}}\\[0.2em]
                 {\Large\textbf{\@title}}\\[0.3em]
                 % {\Large\colorbox[rgb]{0,0.208,0.376}{\textcolor{white}{\textbf{Exercise \sheetname\ifsolutions\ (Solutions)\fi}}}}\\[0.3em]
-                \textbf{\lecturer{}}\\[0.1em]
-                \text{Tutor: \teachingAssistants{}}\\[0.1em]
-                \text{Editors: \editors{}}
+                \textbf{Prof.~Dr.~Mikhail~Mikhasenko}\\[0.1em]
+                \text{Tutor: Hendric Jonas, Christoph T/"onnis}\\[0.1em]
+                \text{Editors: Hendric Jonas, Christoph T/"onnis}
             \end{minipage} &
             % Right: Physics logo
             \begin{minipage}[c]{0.22\textwidth}
