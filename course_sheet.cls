@@ -151,7 +151,7 @@
             % Left: agmikhasenko logo
             \begin{minipage}[c]{0.22\textwidth}
                 \centering
-                \includegraphics[height=1.8cm]{../img/ep1mikhasenko_logo.png}
+                \includegraphics[height=1.8cm]{./img/ep1mikhasenko_logo.png}
             \end{minipage} &
             % Center: Course title and instructors
             \begin{minipage}[c]{0.56\textwidth}
@@ -166,7 +166,7 @@
             % Right: Physics logo
             \begin{minipage}[c]{0.22\textwidth}
                 \centering
-                \includegraphics[height=1.8cm]{../img/physics-logo.png}
+                \includegraphics[height=1.8cm]{./img/physics-logo.png}
             \end{minipage}
         \end{tabular*}\\[0.5em]
 
