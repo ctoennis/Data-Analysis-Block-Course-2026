@@ -32,6 +32,8 @@ jobs:
               -type f \
               -name '*.tex' \
               -not -path './.git/*' \
+              -not -name '2026-SoSe.tex'\
+              -not -name 'course-info.tex'\
               -print0
           )
 
