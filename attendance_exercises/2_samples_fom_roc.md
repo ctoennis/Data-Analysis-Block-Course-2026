@@ -1,6 +1,6 @@
 # Exercise: Diagnosing an Infection with Temperature
 
-## Learning objectives
+# Learning objectives
 
 By the end of this exercise, you should be able to:
 
@@ -12,7 +12,7 @@ By the end of this exercise, you should be able to:
 
 ---
 
-## Scenario
+# Scenario
 
 A hospital is testing whether a patient's **body temperature** can be used to diagnose an infection.
 
@@ -23,7 +23,7 @@ Ten patients have been examined. After a more definitive medical test, we know w
 
 The hospital considers a patient **positive for infection** if their temperature is **above a chosen threshold**.
 
-### Patient data
+## Patient data
 
 | Patient | Temperature (°C) | Actually infected? |
 | :-----: | ---------------: | :----------------: |
@@ -42,17 +42,17 @@ There are therefore **5 infected patients (signal)** and **5 non-infected patien
 
 ---
 
-## Part 1 — Choosing a temperature threshold
+# Choosing a temperature threshold
 
 Suppose the hospital initially chooses a threshold of
 
 $$
-T > 37.5^\circ\mathrm{C}.
+T > 37.5^\circ\mathrm{C}
 $$
 
 A patient is classified as **positive** when their temperature is above this value.
 
-### Questions
+## Questions
 
 1. Which patients are classified as positive?
 2. Among these patients, how many are:
@@ -74,7 +74,7 @@ Complete the confusion matrix:
 
 ---
 
-## Part 2 — Sensitivity
+# Sensitivity
 
 **Sensitivity** measures the fraction of all truly infected patients that the diagnostic method successfully identifies.
 
@@ -84,7 +84,7 @@ $$
 \boxed{\text{Sensitivity} = \frac{\text{TP}}{\text{TP}+\text{FN}}}
 $$
 
-### Questions
+## Questions
 
 Using the threshold $T>37.5^\circ\mathrm{C}$:
 
@@ -94,41 +94,33 @@ Using the threshold $T>37.5^\circ\mathrm{C}$:
 
 ---
 
-## Part 3 — Signal and background efficiency
+# Signal and background efficiency
 
 In a classification problem, we can interpret the infected patients as **signal** and the non-infected patients as **background**.
 
-### Signal efficiency
+## Signal efficiency
 
 The **signal efficiency** is the fraction of all signal events that pass the selection:
 
 $$
-\boxed{
-\epsilon_S =
-\frac{\text{number of signal events passing}}
-{\text{total number of signal events}}
-}
+\epsilon_S = \frac{\text{number of signal events passing}}{\text{total number of signal events}}
 $$
 
 Notice that, in this example,
 
 $$
-\epsilon_S = \text{sensitivity}.
+\epsilon_S = \text{sensitivity}
 $$
 
-### Background efficiency
+## Background efficiency
 
 The **background efficiency** is the fraction of all background events that pass the selection:
 
 $$
-\boxed{
-\epsilon_B =
-\frac{\text{number of background events passing}}
-{\text{total number of background events}}
-}
+\epsilon_B = \frac{\text{number of background events passing}}{\text{total number of background events}}
 $$
 
-### Questions
+## Questions
 
 For the threshold $T>37.5^\circ\mathrm{C}$:
 
@@ -139,16 +131,14 @@ For the threshold $T>37.5^\circ\mathrm{C}$:
 
 ---
 
-## Part 4 — The Gini index
+# The Gini index
 
 The **Gini index** is a measure of how mixed two classes are within a sample.
 
 For two classes, it is defined as
 
 $$
-\boxed{
 G = 1-p_S^2-p_B^2
-}
 $$
 
 where:
@@ -160,16 +150,16 @@ where:
 A sample containing only one class has
 
 $$
-G=0,
+G=0
 $$
 
 while a sample containing equal amounts of signal and background has
 
 $$
-G=0.5.
+G=0.5
 $$
 
-### Questions
+## Questions
 
 Consider **all 10 patients together**.
 
@@ -192,13 +182,13 @@ Finally, consider the patients classified as **negative**.
 
 ---
 
-## Part 5 — Investigating the threshold
+# Investigating the threshold
 
 The choice of $37.5^\circ\mathrm{C}$ was arbitrary. Let's see what happens when we change it.
 
 Calculate the signal and background efficiencies for several thresholds.
 
-### Questions
+## Questions
 
 1. What happens to the **signal efficiency** as the threshold is increased?
 2. What happens to the **background efficiency**?
@@ -209,13 +199,13 @@ Calculate the signal and background efficiencies for several thresholds.
 
 ---
 
-## Part 6 — Challenge: Finding a useful separation
+# Challenge: Finding a useful separation
 
 Suppose the hospital wants a diagnostic method that keeps as many infected patients as possible while rejecting as many non-infected patients as possible.
 
 One way of visualizing the performance is to plot signal efficiency against background efficiency.
 
-### Task
+## Task
 
 Using the results from Part 5:
 
@@ -226,17 +216,29 @@ Using the results from Part 5:
 
 ---
 
-## Discussion
+# Short conceptual questions
 
-Consider the following questions:
+## Question 1
 
-* If missing an infected patient is considered very serious, would the hospital tend to prefer a **higher or lower** temperature threshold?
-* What would happen to the number of false positives if the threshold were lowered?
-* What would happen to the sensitivity?
-* Why might a hospital not simply choose the threshold that gives the smallest background efficiency?
-* How does this example illustrate the general problem of **classification** in machine learning and experimental physics?
+If missing an infected patient is considered very serious, would the hospital tend to prefer a **higher or lower** temperature threshold?
 
-### Key concepts
+## Question 2
+
+What would happen to the number of false positives if the threshold were lowered?
+
+## Question 3
+
+What would happen to the sensitivity?
+
+## Question 4
+
+Why might a hospital not simply choose the threshold that gives the smallest background efficiency?
+
+## Question 5
+
+How does this example illustrate the general problem of **classification** in machine learning and experimental physics?
+
+## Key concepts
 
 | Concept                   | Meaning in this exercise                                |
 | ------------------------- | ------------------------------------------------------- |

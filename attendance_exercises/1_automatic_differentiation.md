@@ -18,7 +18,9 @@ The calculations in this sheet are designed to be done **by hand**. No programmi
 
 # Forward-mode AD with dual numbers
 
-## What are dual numbers?
+## Dual number basics
+
+### What are dual numbers?
 
 Automatic differentiation (AD) computes derivatives by applying the chain rule to the elementary operations of a calculation. For a composition, the chain rule gives $(f\circ q)'(x)=f'(q(x))q'(x)$.
 
@@ -41,8 +43,7 @@ The ordinary value $x$ is called the **primal value**. The coefficient $\dot{x}$
 If we then evaluate a differentiable function $f$ using its value and first derivative for each elementary operation together with $\varepsilon^2=0$, we obtain
 
 $$
-f(x+\dot{x}\varepsilon)
-= f(x) + f'(x)\dot{x}\,\varepsilon
+f(x+\dot{x}\varepsilon) = f(x) + f'(x)\dot{x}\,\varepsilon
 $$
 
 For the special choice $\dot{x}=1$ we obtain
@@ -55,7 +56,7 @@ so the coefficient of $\varepsilon$ is directly $f'(x)$.
 
 ---
 
-## Arithmetic with dual numbers
+### Arithmetic with dual numbers
 
 Let
 
@@ -68,7 +69,7 @@ $$
 be two dual numbers. We define addition and multiplication rules
 
 #### Addition
-
+on
 $$
 \hat{a}+\hat{b} =(a+b)+(\dot{a}+\dot{b})\varepsilon
 $$
@@ -110,7 +111,7 @@ $$
 
 ---
 
-## Very simple 1D example
+### Very simple 1D example
 
 Consider
 
@@ -157,7 +158,7 @@ The important point is that the value and the derivative were propagated at the 
 
 ---
 
-## More than one input
+### More than one input
 
 Suppose now that we have a function of dimension $m$ that takes as its argument a vector with $n$ components
 
@@ -203,9 +204,9 @@ Here $\mathbf v$ need not have unit length: scaling the seed scales the directio
 
 ---
 
-# Forward-mode exercises
+## Forward-mode exercises
 
-## Exercise 1.1 — Scalar input, scalar output
+### Exercise 1.1 — Scalar input, scalar output
 
 Consider
 
@@ -223,7 +224,7 @@ using dual-number propagation.
 
 ---
 
-## Exercise 1.2 — Vector input, scalar output
+### Exercise 1.2 — Vector input, scalar output
 
 Consider
 
@@ -268,7 +269,7 @@ $$
 
 ---
 
-## Exercise 1.3 — Vector input, vector output
+### Exercise 1.3 — Vector input, vector output
 
 Consider the vector-valued function
 
@@ -332,9 +333,11 @@ $$
 
 ---
 
-# Part II — Reverse-mode AD / Backward AD
+# Reverse-mode AD / Backward AD
 
-## 1. The basic idea
+## Reverse-mode Basics
+
+### The Basic Idea
 
 Forward mode propagates derivatives together with the values from input to output.
 
@@ -366,11 +369,11 @@ Then the chain rule is applied locally, one operation at a time, in reverse orde
 
 ---
 
-## Local backward rules
+### Local backward rules
 
 Suppose an intermediate variable $c$ is computed from earlier variables.
 
-### Addition
+#### Addition
 
 If
 
@@ -388,7 +391,7 @@ $$
 
 **Accumulation**, written $\bar a\mathrel{+}=\bar c$, means replacing $\bar a$ by its current value plus $\bar c$: if one variable influences the output through several paths, all contributions to its adjoint must be added.
 
-### Multiplication
+#### Multiplication
 
 If
 
@@ -404,7 +407,7 @@ $$
 \bar b \mathrel{+}= \bar c\,a
 $$
 
-### Some useful elementary functions
+#### Some useful elementary functions
 
 $$
 c = e^a \qquad \Rightarrow \qquad \bar a \mathrel{+}= \bar c\,e^a
@@ -421,7 +424,7 @@ $$
 
 ---
 
-## Very simple 1D reverse-mode example
+### Very simple 1D reverse-mode example
 
 Consider
 
@@ -445,7 +448,7 @@ $$
 f=v_2
 $$
 
-### Forward pass
+#### Forward pass
 
 At $x=2$,
 
@@ -455,7 +458,7 @@ v_1=3
 v_2=9
 $$
 
-### Backward pass
+#### Backward pass
 
 Start with
 
@@ -498,7 +501,7 @@ In one dimension this may look more complicated than ordinary differentiation. I
 
 ---
 
-## Reverse mode for several inputs
+### Reverse mode for several inputs
 
 For
 
@@ -534,11 +537,11 @@ To reconstruct the complete Jacobian, use one reverse sweep per output basis vec
 
 ---
 
-# Reverse-mode exercises
+## Reverse-mode exercises
 
 Use exactly the same three functions as in the forward-mode section.
 
-## Exercise 2.1 — Scalar input, scalar output
+### Exercise 2.1 — Scalar input, scalar output
 
 For
 
@@ -556,7 +559,7 @@ at $x=1$:
 
 ---
 
-## Exercise 2.2 — Three inputs, scalar output
+### Exercise 2.2 — Three inputs, scalar output
 
 For
 
@@ -593,7 +596,7 @@ The scalar output is $g=d$.
 
 ---
 
-## Exercise 2.3 — Three inputs, two outputs
+### Exercise 2.3 — Three inputs, two outputs
 
 For
 
@@ -703,16 +706,15 @@ $$
 
 instead of simply assigning one value to $\bar x$?
 
-### Key concepts
+## Key concepts
 
 | Concept                              | Meaning in this exercise                                                                         |
-| --------------- | --------------------------------------------- |
-| **Automatic differentiation (AD)**   | Computing derivatives by applying the chain rule to elementary operations.                       |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Automatic differentiation (AD)**   | Computing derivatives by applying the chain rule.                                                |
 | **Loss**                             | A scalar measure of how poorly a model fits its target.                                          |
 | **Dual number**                      | $x+\dot x\varepsilon$, where $\varepsilon\ne0$ and $\varepsilon^2=0$.                            |
-| **Input seed**                       | The initial tangent or input direction chosen for a forward sweep.                               |
+| **Input seed**                       | The initial tangent or input direction for a forward sweep.                                      |
 | **Directional derivative**           | Rate of change along $\mathbf x+t\mathbf v$; for a scalar output, $\nabla g^T\mathbf v$.         |
-| **Jacobian matrix**                  | Matrix of first partial derivatives, with outputs as rows and inputs as columns.                 |
 | **Forward mode / JVP**               | Propagates values and tangents to compute $J\mathbf v$.                                          |
 | **Sweep / pass**                     | One traversal of the calculation in a given direction.                                           |
 | **Computational graph**              | Nodes and directed dependencies representing a calculation.                                      |
