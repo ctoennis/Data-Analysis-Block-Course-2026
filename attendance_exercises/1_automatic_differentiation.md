@@ -705,18 +705,18 @@ instead of simply assigning one value to $\bar x$?
 
 ### Key concepts
 
-| Concept | Meaning in this exercise |
-| --- | --- |
-| **Automatic differentiation (AD)** | Computing derivatives by applying the chain rule to elementary operations. |
-| **Loss** | A scalar measure of how poorly a model fits its target. |
-| **Dual number** | $x+\dot x\varepsilon$, where $\varepsilon\ne0$ and $\varepsilon^2=0$. |
-| **Input seed** | The initial tangent or input direction chosen for a forward sweep. |
-| **Directional derivative** | Rate of change along $\mathbf x+t\mathbf v$; for a scalar output, $\nabla g^T\mathbf v$. |
-| **Jacobian matrix** | Matrix of first partial derivatives, with outputs as rows and inputs as columns. |
-| **Forward mode / JVP** | Propagates values and tangents to compute $J\mathbf v$. |
-| **Sweep / pass** | One traversal of the calculation in a given direction. |
-| **Computational graph** | Nodes and directed dependencies representing a calculation. |
-| **Adjoint** | $\bar v=\partial L/\partial v$: sensitivity of the chosen scalar output $L$ to $v$. |
-| **Output seed** | Initial output adjoints; $1$ for a scalar output, or weights $\mathbf w$ for several outputs. |
-| **Reverse mode / VJP** | Propagates adjoints backwards to compute $J^T\mathbf w$, the transpose of $\mathbf w^TJ$. |
-| **Accumulation** | Adding all contributions to an adjoint when a variable affects the output through several paths. |
+| Concept                              | Meaning in this exercise                                                                         |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Automatic differentiation (AD)**   | Computing derivatives by applying the chain rule to elementary operations.                       |
+| **Loss**                             | A scalar measure of how poorly a model fits its target.                                          |
+| **Dual number**                      | $x+\dot x\varepsilon$, where $\varepsilon\ne0$ and $\varepsilon^2=0$.                            |
+| **Input seed**                       | The initial tangent or input direction chosen for a forward sweep.                               |
+| **Directional derivative**           | Rate of change along $\mathbf x+t\mathbf v$; for a scalar output, $\nabla g^T\mathbf v$.         |
+| **Jacobian matrix**                  | Matrix of first partial derivatives, with outputs as rows and inputs as columns.                 |
+| **Forward mode / JVP**               | Propagates values and tangents to compute $J\mathbf v$.                                          |
+| **Sweep / pass**                     | One traversal of the calculation in a given direction.                                           |
+| **Computational graph**              | Nodes and directed dependencies representing a calculation.                                      |
+| **Adjoint**                          | $\bar v=\partial L/\partial v$: sensitivity of the chosen scalar output $L$ to $v$.              |
+| **Output seed**                      | Initial output adjoints; $1$ for a scalar output, or weights $\mathbf w$ for several outputs.    |
+| **Reverse mode / VJP**               | Propagates adjoints backwards to compute $J^T\mathbf w$, the transpose of $\mathbf w^TJ$.        |
+| **Accumulation**                     | Adding all contributions to an adjoint when a variable affects the output through several paths. |
