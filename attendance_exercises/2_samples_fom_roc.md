@@ -81,9 +81,7 @@ Complete the confusion matrix:
 The formula is
 
 $$
-\text{Sensitivity}
-=
-\frac{\text{TP}}{\text{TP}+\text{FN}}
+\boxed{\text{Sensitivity} = \frac{\text{TP}}{\text{TP}+\text{FN}}}
 $$
 
 ### Questions
