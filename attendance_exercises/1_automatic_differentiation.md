@@ -1,4 +1,4 @@
-# W2: Forward and Reverse Automatic Differentiation by Hand
+# Exercise: Forward and Reverse Automatic Differentiation by Hand
 
 ## Learning goals
 
