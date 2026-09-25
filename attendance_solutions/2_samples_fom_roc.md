@@ -1,6 +1,6 @@
-# Answer Key
+# Exercise: Diagnosing an Infection with Temperature - Solutions
 
-## Part 1 — Threshold $T>37.5^\circ\mathrm{C}$
+# Threshold $T>37.5^\circ\mathrm{C}$
 
 Positive: patients **6, 7, 8, 9, 10**.
 
@@ -11,46 +11,43 @@ Positive: patients **6, 7, 8, 9, 10**.
 
 ---
 
-## Part 2 — Sensitivity
+# Sensitivity
 
 $$
-\text{Sensitivity}
-=\frac{TP}{TP+FN}
-=\frac{4}{5}
-=\boxed{0.80=80\%}
+\text{Sensitivity} = \frac{TP}{TP+FN} = \frac{4}{5} = 0.80=80\%
 $$
 
 Thus, **80% of the infected patients are correctly identified**.
 
 ---
 
-## Part 3 — Signal and background efficiency
+# Signal and background efficiency
 
 Signal efficiency:
 
 $$
-\epsilon_S=\frac{4}{5}=\boxed{80\%}
+\epsilon_S=\frac{4}{5} = 80\%
 $$
 
 Background efficiency:
 
 $$
-\epsilon_B=\frac{1}{5}=\boxed{20\%}
+\epsilon_B=\frac{1}{5} = 20\%
 $$
 
 Therefore, the background rejection is
 
 $$
-1-\epsilon_B=\boxed{80\%}.
+1-\epsilon_B= 80\%
 $$
 
 In this example, **sensitivity = signal efficiency**.
 
 ---
 
-## Part 4 — Gini index
+# Gini index
 
-### All 10 patients
+## All 10 patients
 
 There are 5 signal and 5 background patients:
 
@@ -59,11 +56,10 @@ p_S=p_B=0.5
 $$
 
 $$
-G=1-(0.5)^2-(0.5)^2
-=\boxed{0.5}
+G=1-(0.5)^2-(0.5)^2 = 0.5
 $$
 
-### Positive group
+## Positive group
 
 There are 4 signal and 1 background:
 
@@ -72,11 +68,10 @@ p_S=0.8,\qquad p_B=0.2
 $$
 
 $$
-G=1-(0.8)^2-(0.2)^2
-=\boxed{0.32}
+G=1-(0.8)^2-(0.2)^2 = 0.32
 $$
 
-### Negative group
+## Negative group
 
 There are 1 signal and 4 background:
 
@@ -85,15 +80,14 @@ p_S=0.2,\qquad p_B=0.8
 $$
 
 $$
-G=1-(0.2)^2-(0.8)^2
-=\boxed{0.32}
+G=1-(0.2)^2-(0.8)^2 = 0.32
 $$
 
 A **lower Gini index means the group is more pure**, i.e. it contains predominantly one class.
 
 ---
 
-## Part 5 — Threshold study
+# Threshold study
 
 |                  Threshold | Signal efficiency | Background efficiency | Signal rejected | Background rejected |
 | -------------------------: | ----------------: | --------------------: | --------------: | ------------------: |
@@ -109,7 +103,7 @@ There is therefore a **trade-off between signal retention and background rejecti
 
 ---
 
-## Part 6 — Interpretation
+# Interpretation
 
 The points on a signal-efficiency vs. background-efficiency plot illustrate the **threshold trade-off**.
 
