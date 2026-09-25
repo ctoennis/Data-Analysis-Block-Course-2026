@@ -1,6 +1,6 @@
 # Exercise: Forward and Reverse Automatic Differentiation by Hand
 
-## Learning goals
+# Learning goals
 
 After this exercise, you should be able to
 
@@ -16,9 +16,9 @@ The calculations in this sheet are designed to be done **by hand**. No programmi
 
 ---
 
-# Part I — Forward-mode AD with dual numbers
+# Forward-mode AD with dual numbers
 
-## 1. What are dual numbers?
+## What are dual numbers?
 
 Automatic differentiation (AD) computes derivatives by applying the chain rule to the elementary operations of a calculation. For a composition, the chain rule gives $(f\circ q)'(x)=f'(q(x))q'(x)$.
 
@@ -55,7 +55,7 @@ so the coefficient of $\varepsilon$ is directly $f'(x)$.
 
 ---
 
-## 2. Arithmetic with dual numbers
+## Arithmetic with dual numbers
 
 Let
 
@@ -67,13 +67,13 @@ $$
 
 be two dual numbers. We define addition and multiplication rules
 
-### Addition
+#### Addition
 
 $$
 \hat{a}+\hat{b} =(a+b)+(\dot{a}+\dot{b})\varepsilon
 $$
 
-### Multiplication
+#### Multiplication
 
 $$
 \hat{a}\hat{b} =(a+\dot{a}\varepsilon)(b+\dot{b}\varepsilon)
@@ -87,7 +87,7 @@ $$
 
 which is exactly the product rule in differentiation.
 
-### Some useful elementary functions
+#### Some useful elementary functions
 
 Here $\log$ denotes the natural logarithm with base $e$.
 
@@ -110,7 +110,7 @@ $$
 
 ---
 
-## 3. Very simple 1D example
+## Very simple 1D example
 
 Consider
 
@@ -157,7 +157,7 @@ The important point is that the value and the derivative were propagated at the 
 
 ---
 
-## 4. More than one input
+## More than one input
 
 Suppose now that we have a function of dimension $m$ that takes as its argument a vector with $n$ components
 
@@ -366,7 +366,7 @@ Then the chain rule is applied locally, one operation at a time, in reverse orde
 
 ---
 
-## 2. Local backward rules
+## Local backward rules
 
 Suppose an intermediate variable $c$ is computed from earlier variables.
 
@@ -421,7 +421,7 @@ $$
 
 ---
 
-## 3. Very simple 1D reverse-mode example
+## Very simple 1D reverse-mode example
 
 Consider
 
@@ -498,7 +498,7 @@ In one dimension this may look more complicated than ordinary differentiation. I
 
 ---
 
-## 4. Reverse mode for several inputs
+## Reverse mode for several inputs
 
 For
 
@@ -706,7 +706,7 @@ instead of simply assigning one value to $\bar x$?
 ### Key concepts
 
 | Concept                              | Meaning in this exercise                                                                         |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| --------------- | --------------------------------------------- |
 | **Automatic differentiation (AD)**   | Computing derivatives by applying the chain rule to elementary operations.                       |
 | **Loss**                             | A scalar measure of how poorly a model fits its target.                                          |
 | **Dual number**                      | $x+\dot x\varepsilon$, where $\varepsilon\ne0$ and $\varepsilon^2=0$.                            |
