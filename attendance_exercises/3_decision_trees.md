@@ -1,6 +1,6 @@
-# Decision Trees by Hand
+# Exercise: Decision Trees by Hand
 
-## Learning goals
+# Learning goals
 
 After this exercise, you should be able to
 
@@ -21,7 +21,7 @@ The calculations in this sheet are designed to be done by hand. No programming i
 
 ---
 
-# Part I - Understanding a single leaf
+# Understanding a single leaf
 
 **Regression** means predicting a numerical value. An **observation** is one data point; its **features** are the input values, such as $x$, and its **target** $y$ is the value to be predicted. The **training data** are the observations used to choose the model. A prediction is written $\hat y$, and the fitted function is written $\hat f$.
 
@@ -32,7 +32,7 @@ Throughout this sheet, split rules send $x<t$ to the left child and $x\geq t$ to
 Consider a leaf that contains four target values
 
 | observation | target $y_i$ |
-|---:|---:|
+|:---:|:---:|
 | 1 | 2 |
 | 2 | 3 |
 | 3 | 4 |
@@ -102,7 +102,7 @@ Give short answers:
 The **mean absolute error (MAE)** averages the absolute residuals:
 
 $$
-\mathrm{MAE}(c)=\frac1N\sum_i |y_i-c|.
+\mathrm{MAE}(c)=\frac1N\sum_i |y_i-c|
 $$
 
 A **median** minimizes this loss. To find it, sort the target values and take the middle value. For an even number of values, use the arithmetic mean of the two middle values.
@@ -112,7 +112,7 @@ A **median** minimizes this loss. To find it, sort the target values and take th
 
 ---
 
-# Part II - How does a regression tree find its first split?
+# How does a regression tree find its first split?
 
 Consider
 
@@ -139,22 +139,22 @@ $$
 and complete the following table:
 
 | $x$ | $y=f(x)=x^2$ |
-|---:|---:|
-| 0 | |
-| 1 | |
-| 2 | |
-| 3 | |
-| 4 | |
-| 5 | |
-| 6 | |
+|:---:|:---:|
+| 0 | $\vphantom{0000}$ |
+| 1 | $\vphantom{0000}$ |
+| 2 | $\vphantom{0000}$ |
+| 3 | $\vphantom{0000}$ |
+| 4 | $\vphantom{0000}$ |
+| 5 | $\vphantom{0000}$ |
+| 6 | $\vphantom{0000}$ |
 
-Plot these seven training points in a sufficiently large diagram and also sketch the true function $f(x)=x^2$.
+Plot these seven training points in a sufficiently large diagram and also sketch the true function $f(x)=x^2$
 
 ---
 
 ## Exercise 2.2 - Before splitting: the root leaf
 
-Initially, the tree contains only one leaf. Therefore all seven observations receive the same prediction (i.e. the mean value as you have seen in Part I).
+Initially, the tree contains only one leaf. Therefore all seven observations receive the same prediction (i.e. the mean value as you have seen in Part 1).
 
 1. Compute the mean target value in the root leaf.
 2. Draw this constant prediction in the same graph as $f(x)$.
@@ -211,18 +211,18 @@ Write down the $x$ and $y$ values that go to the left child:
 
 | $x<2.5$ | $y$ |
 |---:|---:|
-| $\phantom{0}$ | $\phantom{0}$ |
-| $\phantom{0}$ | $\phantom{0}$ |
-| $\phantom{0}$ | $\phantom{0}$ |
+| $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 Write down the $x$ and $y$ values that go to the right child:
 
 | $x\geq 2.5$ | $y$ |
 |---:|---:|
-| $\phantom{0}$ | $\phantom{0}$ |
-| $\phantom{0}$ | $\phantom{0}$ |
-| $\phantom{0}$ | $\phantom{0}$ |
-| $\phantom{0}$ | $\phantom{0}$ |
+| $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 **2. Determine the prediction in each child.**
 
@@ -276,12 +276,12 @@ Complete the table.
 
 | threshold $t$ | mean left $\hat y_L$ | mean right $\hat y_R$ | $\mathrm{SSE}_L$ | $\mathrm{SSE}_R$ | total SSE |
 |---:|---:|---:|---:|---:|---:|
-| 0.5 |  |  |  |  |  |
-| 1.5 |  |  |  |  |  |
-| 2.5 |  |  |  |  |  |
-| 3.5 |  |  |  |  |  |
-| 4.5 |  |  |  |  |  |
-| 5.5 |  |  |  |  |  |
+| 0.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| 1.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| 2.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| 3.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| 4.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| 5.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 The decision rule of the tree is:
 
@@ -292,13 +292,7 @@ $$
 Equivalently, choose the split with the largest error reduction
 
 $$
-\Delta \mathrm{SSE}
-=
-\mathrm{SSE}_{\mathrm{parent}}
--
-\left(
-\mathrm{SSE}_L+\mathrm{SSE}_R
-\right)
+\Delta \mathrm{SSE} = \mathrm{SSE}_{\mathrm{parent}} - \left(\mathrm{SSE}_L+\mathrm{SSE}_R\right)
 $$
 
 1. Which threshold is selected?
@@ -345,30 +339,30 @@ Use the errors already calculated to complete the table.
 
 | Model | Training SSE |
 | --- | --- |
-| One root leaf | $\phantom{0}$ |
-| Depth-1 tree | $\phantom{0}$ |
-| Depth-2 tree | $\phantom{0}$ |
+| One root leaf | $\vphantom{0000}$ |
+| Depth-1 tree | $\vphantom{0000}$ |
+| Depth-2 tree | $\vphantom{0000}$ |
 
 Which of these three models has the smallest training error?
 
 ---
 
-# Part III - More than one input feature
+# More than one input feature
 
 A regression tree can choose not only where to split, but also which feature to split.
 
 Consider the two-dimensional function
 
 $$
-f(x_1,x_2)=x_1^2+4x_2.
+f(x_1,x_2)=x_1^2+4x_2
 $$
 
 We sample
 
 $$
-x_1\in\{0,1,2,3\},
+x_1\in\{0,1,2,3\}
 \qquad
-x_2\in\{0,1\}.
+x_2\in\{0,1\}
 $$
 
 The **feature space** consists of all possible combinations of input values. An **axis-aligned split** tests one feature at a time. In the $(x_1,x_2)$ plane, draw $x_1$ horizontally and $x_2$ vertically; such splits have boundaries parallel to a coordinate axis. In two dimensions, the resulting regions are rectangles, possibly unbounded.
@@ -380,7 +374,7 @@ First fix $x_2=0$.
 Then
 
 $$
-f(x_1,0)=x_1^2.
+f(x_1,0)=x_1^2
 $$
 
 Now fix $x_2=1$.
@@ -388,7 +382,7 @@ Now fix $x_2=1$.
 Then
 
 $$
-f(x_1,1)=x_1^2+4.
+f(x_1,1)=x_1^2+4
 $$
 
 1. Evaluate both functions at $x_1=0,1,2,3$.
@@ -396,14 +390,14 @@ $$
 
    | $x_1$ | $x_2$ | $y=f(x_1,x_2)$ |
    |---:|---:|---:|
-   | 0 | 0 | |
-   | 1 | 0 | |
-   | 2 | 0 | |
-   | 3 | 0 | |
-   | 0 | 1 | |
-   | 1 | 1 | |
-   | 2 | 1 | |
-   | 3 | 1 | |
+   | 0 | 0 | $\vphantom{0000}$ |
+   | 1 | 0 | $\vphantom{0000}$ |
+   | 2 | 0 | $\vphantom{0000}$ |
+   | 3 | 0 | $\vphantom{0000}$ |
+   | 0 | 1 | $\vphantom{0000}$ |
+   | 1 | 1 | $\vphantom{0000}$ |
+   | 2 | 1 | $\vphantom{0000}$ |
+   | 3 | 1 | $\vphantom{0000}$ |
 
 3. In separate coordinate systems, plot $f(x_1,0)$ and $f(x_1,1)$ as functions of $x_1$.
 
@@ -422,10 +416,10 @@ Complete the following table by repeating the same steps as in Exercises 2.4–2
 
    | feature | threshold | mean left | mean right | total SSE |
    |---|---:|---:|---:|---:|
-   | $x_1$ | 0.5 |  |  |  |
-   | $x_1$ | 1.5 |  |  |  |
-   | $x_1$ | 2.5 |  |  |  |
-   | $x_2$ | 0.5 |  |  |  |
+   | $x_1$ | 0.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+   | $x_1$ | 1.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+   | $x_1$ | 2.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+   | $x_2$ | 0.5 | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
    Which feature and threshold are selected?
 
@@ -451,7 +445,7 @@ For each child:
 
 ---
 
-# Part IV - A forest by hand
+# A forest by hand
 
 You will first train a regression tree using absolute error. You will then train three trees on bootstrap samples, average their predictions to form a forest, and compare the predictions with those of the single tree.
 
@@ -460,18 +454,18 @@ You will first train a regression tree using absolute error. You will then train
 Consider
 
 $$
-f(x)=\sin(x)+\frac{x}{\pi},\qquad 0\leq x\leq2\pi.
+f(x)=\sin(x)+\frac{x}{\pi},\qquad 0\leq x\leq2\pi
 $$
 
 Each input position occurs exactly once in the training dataset.
 
 | $x$ | $f(x)$ |
 | --- | --- |
-| $0$ | $\phantom{0}$ |
-| $\pi/2$ | $\phantom{0}$ |
-| $\pi$ | $\phantom{0}$ |
-| $3\pi/2$ | $\phantom{0}$ |
-| $2\pi$ | $\phantom{0}$ |
+| $0$ | $\vphantom{0000}$ |
+| $\pi/2$ | $\vphantom{0000}$ |
+| $\pi$ | $\vphantom{0000}$ |
+| $3\pi/2$ | $\vphantom{0000}$ |
+| $2\pi$ | $\vphantom{0000}$ |
 
 1. Complete the table.
 2. Plot the five training points and sketch the function.
@@ -485,7 +479,7 @@ For example, the median of $1,3,8$ is $3$, and the median of $1,3,5,8$ is $(3+5)
 A leaf prediction $c$ has mean absolute error
 
 $$
-\mathrm{MAE}(c)=\frac1N\sum_{i=1}^{N}|y_i-c|.
+\mathrm{MAE}(c)=\frac1N\sum_{i=1}^{N}|y_i-c|
 $$
 
 A median minimizes this error. Determine the leaf median by sorting the **target values**.
@@ -497,36 +491,36 @@ For each threshold, send $x<t$ to the left child and $x\geq t$ to the right chil
 | Child |  | 1 | 2 | 3 | 4 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | — | — | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | — | — | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | — | — | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $\pi/2$ | $\pi$ | $3\pi/2$ | $2\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 #### Threshold $t=3\pi/4$
 
 | Child |  | 1 | 2 | 3 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $\pi/2$ | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $\pi$ | $3\pi/2$ | $2\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 #### Threshold $t=5\pi/4$
 
 | Child |  | 1 | 2 | 3 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $\pi/2$ | $\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $3\pi/2$ | $2\pi$ | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 #### Threshold $t=7\pi/4$
 
 | Child |  | 1 | 2 | 3 | 4 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $\pi/2$ | $\pi$ | $3\pi/2$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $2\pi$ | — | — | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | — | — | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | — | — | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 ### Compare the thresholds
 
@@ -534,7 +528,7 @@ For each threshold, send $x<t$ to the left child and $x\geq t$ to the right chil
 2. Calculate the total absolute error for each threshold:
 
    $$
-   S=N_L\mathrm{MAE}_L+N_R\mathrm{MAE}_R,
+   S=N_L\mathrm{MAE}_L+N_R\mathrm{MAE}_R
    $$
 
    where $N_L$ and $N_R$ are the numbers of observations in the children.
@@ -542,10 +536,10 @@ For each threshold, send $x<t$ to the left child and $x\geq t$ to the right chil
 
 | Threshold | Sum $S$ |
 | --- | --- |
-| $\pi/4$ | $\phantom{0}$ |
-| $3\pi/4$ | $\phantom{0}$ |
-| $5\pi/4$ | $\phantom{0}$ |
-| $7\pi/4$ | $\phantom{0}$ |
+| $\pi/4$ | $\vphantom{0000}$ |
+| $3\pi/4$ | $\vphantom{0000}$ |
+| $5\pi/4$ | $\vphantom{0000}$ |
+| $7\pi/4$ | $\vphantom{0000}$ |
 
 4. Select the threshold with the smallest $S$. If thresholds give the same error, choose the smaller threshold.
 5. Draw the depth-1 tree and label its leaves with their median predictions.
@@ -582,33 +576,33 @@ The candidate thresholds are the midpoints between neighboring distinct input va
 | Child |  | 1 | 2 | 3 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $0$ | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $\pi/2$ | $\pi$ | $2\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 #### Threshold $t=3\pi/4$
 
 | Child |  | 1 | 2 | 3 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $0$ | $\pi/2$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $\pi$ | $2\pi$ | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 #### Threshold $t=3\pi/2$
 
 | Child |  | 1 | 2 | 3 | 4 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $0$ | $\pi/2$ | $\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $2\pi$ | — | — | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | — | — | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | — | — | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 | Threshold | Sum $S$ |
 | --- | --- |
-| $\pi/4$ | $\phantom{0}$ |
-| $3\pi/4$ | $\phantom{0}$ |
-| $3\pi/2$ | $\phantom{0}$ |
+| $\pi/4$ | $\vphantom{0000}$ |
+| $3\pi/4$ | $\vphantom{0000}$ |
+| $3\pi/2$ | $\vphantom{0000}$ |
 
 ### Sample B
 
@@ -617,33 +611,33 @@ The candidate thresholds are the midpoints between neighboring distinct input va
 | Child |  | 1 | 2 | 3 | 4 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | — | — | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | — | — | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | — | — | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $\pi$ | $3\pi/2$ | $2\pi$ | $2\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 #### Threshold $t=5\pi/4$
 
 | Child |  | 1 | 2 | 3 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $\pi$ | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $3\pi/2$ | $2\pi$ | $2\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 #### Threshold $t=7\pi/4$
 
 | Child |  | 1 | 2 | 3 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $\pi$ | $3\pi/2$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $2\pi$ | $2\pi$ | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 | Threshold | Sum $S$ |
 | --- | --- |
-| $\pi/2$ | $\phantom{0}$ |
-| $5\pi/4$ | $\phantom{0}$ |
-| $7\pi/4$ | $\phantom{0}$ |
+| $\pi/2$ | $\vphantom{0000}$ |
+| $5\pi/4$ | $\vphantom{0000}$ |
+| $7\pi/4$ | $\vphantom{0000}$ |
 
 ### Sample C
 
@@ -652,30 +646,30 @@ The candidate thresholds are the midpoints between neighboring distinct input va
 | Child |  | 1 | 2 | 3 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $0$ | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $\pi$ | $\pi$ | $2\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 #### Threshold $t=3\pi/2$
 
 | Child |  | 1 | 2 | 3 | 4 | Median | MAE |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | L | $x_i$ | $0$ | $0$ | $\pi$ | $\pi$ | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 | R | $x_i$ | $2\pi$ | — | — | — | — | — |
-|  | $f(x_i)$ | $\phantom{0}$ | — | — | — | $\phantom{0}$ | $\phantom{0}$ |
+|  | $f(x_i)$ | $\vphantom{0000}$ | — | — | — | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 | Threshold | Sum $S$ |
 | --- | --- |
-| $\pi/2$ | $\phantom{0}$ |
-| $3\pi/2$ | $\phantom{0}$ |
+| $\pi/2$ | $\vphantom{0000}$ |
+| $3\pi/2$ | $\vphantom{0000}$ |
 
 ## Exercise 4.4 - Combine the predictions
 
 A **forest** combines predictions from several trees. Use their arithmetic mean:
 
 $$
-\hat f_{\mathrm{forest}}(x)=\frac{\hat f_A(x)+\hat f_B(x)+\hat f_C(x)}3.
+\hat f_{\mathrm{forest}}(x)=\frac{\hat f_A(x)+\hat f_B(x)+\hat f_C(x)}3
 $$
 
 The leaf predictions are medians; the forest prediction is the mean of the three tree predictions.
@@ -684,11 +678,11 @@ The leaf predictions are medians; the forest prediction is the mean of the three
 
 | $x$ | Target $f(x)$ | Tree A | Tree B | Tree C | Forest | Absolute forest error |
 | --- | --- | --- | --- | --- | --- | --- |
-| $0$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
-| $\pi/2$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
-| $\pi$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
-| $3\pi/2$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
-| $2\pi$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ | $\phantom{0}$ |
+| $0$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $\pi/2$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $\pi$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $3\pi/2$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
+| $2\pi$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ | $\vphantom{0000}$ |
 
 2. Write the forest prediction as a piecewise-constant function. Include every threshold used by any tree.
 3. Sketch the forest prediction.
@@ -700,30 +694,53 @@ In a random forest with several input features, a random subset of features can 
 
 # Short conceptual questions
 
+## Question 1
 
-1. What value does a regression-tree leaf predict when squared error is used?
+What value does a regression-tree leaf predict when squared error is used?
 
-2. Why is that value the mean?
+## Question 2
 
-3. What quantity is minimized when choosing a split?
+Why is that value the mean?
 
-4. Where do the candidate thresholds come from for a continuous feature?
+## Question 3
 
-5. Why is the prediction of a regression tree piecewise constant?
+What quantity is minimized when choosing a split?
 
-6. What is the main effect of increasing tree depth?
+## Question 4
 
-7. Why can a deep tree overfit noisy data?
+Where do the candidate thresholds come from for a continuous feature?
 
-8. In a multidimensional input space, what additional choice must the tree make at every split?
+## Question 5
 
-9. What shape do the regions in the two-dimensional example have when only axis-aligned splits are used?
+Why is the prediction of a regression tree piecewise constant?
 
-10. Why can bootstrap samples produce different trees from the same original dataset, and how do repeated observations affect the calculation?
+## Question 6
 
-11. Does averaging the predictions of several regression trees make the forest prediction continuous? Explain.
+What is the main effect of increasing tree depth?
 
-12. Does a smaller training error guarantee better predictions between the training points? Give a short reason.
+## Question 7
+
+Why can a deep tree overfit noisy data?
+
+## Question 8
+
+In a multidimensional input space, what additional choice must the tree make at every split?
+
+## Question 9
+
+What shape do the regions in the two-dimensional example have when only axis-aligned splits are used?
+
+## Question 10
+
+Why can bootstrap samples produce different trees from the same original dataset, and how do repeated observations affect the calculation?
+
+## Question 11
+
+Does averaging the predictions of several regression trees make the forest prediction continuous? Explain.
+
+## Question 12
+
+Does a smaller training error guarantee better predictions between the training points? Give a short reason.
 
 ## Key concepts
 
