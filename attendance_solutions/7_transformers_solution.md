@@ -1,45 +1,36 @@
----
-title: "Teacher Answer Key: Transformers by Hand"
-published: "30 September 2026"
----
+# Solutions: Transformers by Hand
 
-# Part I - Embeddings
+## Part I - Tokens and embeddings
 
-## Exercise 1.1 - The embedding matrix
+### Exercise 1.1 - Why subword tokens?
 
-1. $E\in\mathbb{R}^{6\times4}$: $V=6$ rows, $d=4$ columns.
-2. $6\times4={24}$ trainable parameters.
-3. A one-hot vector $e_i\in\{0,1\}^V$ has a $1$ only at position $i$. Multiplying $e_i^\top E$ sums each row of $E$ weighted by the corresponding entry of $e_i$; since only entry $i$ is nonzero, the product equals row $i$ of $E$ exactly.
-4. Feeding the raw integer index into a dense layer would impose an arbitrary numeric/ordinal relationship between unrelated words (e.g. index 5 being "closer" to index 4 than to index 0), which has no linguistic meaning. A learned embedding lets the network place semantically related words near each other in a learned space instead.
+1. With character-level tokens, the model has to spend capacity and computation learning spelling and morphology (how characters combine into words) before it can even begin to reason about meaning — and sequences become much longer (roughly one step per letter instead of one step per word/subword), which is expensive since attention cost grows with sequence length.
+2. With word-level tokens, the vocabulary must contain every distinct word form seen during training (millions of entries). Any string not in that fixed vocabulary at training time — a typo, a rare name, a word in another language, a new coinage — has no token at all and is simply unrepresentable ("out of vocabulary") at inference time.
+3. Byte-pair encoding is a compromise: frequent words are merged all the way into a single token (so the model doesn't have to re-derive them character by character every time, keeping sequences short like the word-level case), while rare or unusual strings are decomposed into a handful of smaller, previously-seen pieces built ultimately from raw bytes (so nothing is ever truly "unknown", like the character-level case) — every possible string can still be encoded, just sometimes using more tokens.
+4. Tokenization happens once, before training, and is never revisited by the model: "strawberry" may become a token sequence such as `st`, `raw`, `berry`, and the model only ever sees these three integer ids, never the raw letters "s-t-r-a-w-b-e-r-r-y" as individual symbols. Counting the letter "r" requires information (the exact character sequence) that was merged away at tokenization time; the model would have to have implicitly memorized the letter-by-letter spelling of each token id, which is a much harder and less reliable thing to represent than something it can read directly off its input, like a short script iterating over characters can.
 
-## Exercise 1.2 - Embedding a sentence
+### Exercise 1.2 - The embedding matrix
 
-1. The embedded sequence is
+1. Toy example: $6\times4=\boxed{24}$ trainable parameters. GPT-2: $50{,}257\times768=\boxed{38{,}597{,}376}\approx38.6\text{M}$ parameters — about $38.6/124.4\approx31\%$ of GPT-2's entire 124M parameters. The embedding table alone is nearly a third of the whole model, simply because it scales with vocabulary size, not model depth.
+2. At initialization (e.g. small random values), the rows of $E$ carry no meaningful structure: semantically related words (like "cat" and "dog") sit at essentially random, unrelated positions in the embedding space, just like unrelated words. Training updates every row that appears in a training batch via the gradient of the downstream task loss; words that tend to occur in similar contexts receive similar gradient signals over many updates, so their rows are pulled toward each other. The geometry of $E$ (which rows end up close together) is therefore *learned* from data, not designed.
 
-    $$
-    X=
-    \begin{pmatrix}
-    1&0&0&1\\
-    0&2&0&0\\
-    0&0&2&0\\
-    1&1&0&0\\
-    1&0&0&1\\
-    0&1&1&0
-    \end{pmatrix}
-    $$
+   Concretely bad initializations:
+   - **All rows equal to $\vec 0$:** unlike the classic all-zero-weight problem in a dense layer (where every neuron sees the same input *and* the same gradient and stays identical forever), an embedding lookup only updates the row of the word that actually occurred, so rows *do* start to separate as training proceeds — this is not a permanent symmetry lock. But the first forward pass still carries **no information about which word is present**: $Q,K,V$ are identical for every token, attention degenerates to a uniform average, and if the model uses layer normalisation, normalising an all-zero vector means dividing by a variance of zero.
+   - **Unrelated words initialized to point in (nearly) the same direction:** the model *starts out* believing they are interchangeable. Training can still pull them apart, but only with enough contrastive gradient signal; for rare words this signal may be weak, so the false similarity can persist for a long time, wasting model capacity undoing a wrong prior instead of learning new structure.
 
-    (rows: the, cat, sat, on, the, mat)
-
-2. $X\in\mathbb{R}^{6\times4}$, i.e. $L\times d$ with $L=6$, $d=4$.
-3. Batched: $(8,6,4)$, i.e. $(B,L,d)$.
-4. Yes, both occurrences of "the" give the identical row $(1,0,0,1)$, because the lookup depends only on the token identity, not its position. This alone cannot distinguish the two occurrences of "the" in the sentence - that is exactly the gap positional encoding fills (Exercise 1.3).
+   The common thread: initialization should be small, (pseudo-)random, and unstructured — it should not encode any prior claim about which words are related, since real relatedness must come from data via gradient descent, not from the initial values.
+3. If $d$ is too small, $E$ does not have enough degrees of freedom to place all semantically distinct words at distinguishable positions — the model is forced to conflate words/relationships that should be kept apart, limiting what it can represent (underfitting). If $d$ is too large, the embedding layer has many more trainable parameters (recall question 1: the count is $V\times d$, growing linearly with $d$) than the data may support, increasing the risk of overfitting and computational/memory cost, often with diminishing returns. In practice $d$ is tuned as a hyperparameter, trading representational capacity against parameter count and overfitting risk.
+4. Training only ever optimizes embeddings to help predict the next token given context — but the *statistics* of how words are actually used in language are systematically structured: pairs like (king, man) and (queen, woman) tend to appear in parallel, analogous contexts (royal titles combined with gendered contexts). Gradient descent finds a geometry that efficiently captures such regularities, because encoding "gender" and "royalty" as roughly consistent directions is a compact way to explain many such parallel word pairs at once, which helps prediction generalize across all of them. Nobody hand-designed a "gender axis" — it emerges because the co-occurrence statistics of real language contain that structure, and a linear direction is often the simplest geometric object that can capture "the same kind of contextual shift" across many word pairs simultaneously. This is what nearest-neighbour clustering and analogy arithmetic expose.
+5. Yes, both occurrences of "the" give the identical row $(1,0,0,1)$ (or whatever $E$'s row 0 is), because the lookup depends only on token identity, not on position in the sentence. This alone cannot distinguish the two occurrences — that gap is exactly what positional encoding fills (Exercise 1.3).
 
 ## Exercise 1.3 - Why attention needs position information
 
 1. If we permute the tokens (and the padding mask) with the same permutation $\pi$, every pairwise comparison $q_i\cdot k_j$ that existed before still exists after, just relabelled by $\pi$: the comparison between the *same two tokens* still happens, only its row/column index in the score matrix changes.
 2. No. Plain self-attention is **permutation equivariant**: permuting the input tokens permutes the output the same way, but the *content* of each token's output (given its neighbours) is unchanged. It carries no information about the original order.
-3. E.g. "the dog bit the man" vs. "the man bit the dog" - identical bag of words, opposite meaning.
-4. A positional encoding is added to the embedding **before** it is compared via attention, and it depends only on the position $t$, not on which word is there. Two identical words at different positions now receive different vectors (word embedding + different positional vector), so the query/key comparisons - and hence attention output - become sensitive to where each token sits in the sequence.
+3. E.g. "the dog bit the man" vs. "the man bit the dog" — identical bag of words, opposite meaning.
+4. A positional encoding is added to the embedding **before** it is compared via attention, and it depends only on the position $t$, not on which word is there. Two identical words at different positions now receive different vectors (word embedding + different positional vector), so query/key comparisons — and hence attention output — become sensitive to where each token sits in the sequence.
+5. GPT-2's position vectors are only trained for positions up to its maximum length (e.g. 1024): there is simply no learned vector for a position beyond that, so the model cannot properly process (or generalizes very poorly to) a sequence longer than what it was trained on. A fixed sinusoidal formula can be evaluated at any position, and RoPE's relative rotation can be applied for any offset, so both extrapolate more gracefully to sequence lengths unseen in training, at least in principle.
+6. **(Optional/advanced)** What typically matters for how two tokens should influence each other is *how far apart* they are (e.g. "the word right before me" vs. "a word ten positions away"), not their absolute index in the document. If the attention score depends only on the relative distance $t_i-t_j$, then the same relative pattern behaves identically no matter where it occurs — at position 5 or position 50,000 — which lets patterns learned on shorter sequences transfer to longer ones. An absolute positional code, by contrast, ties learned behaviour to specific absolute indices, which do not generalize the same way to unseen lengths or offsets.
 
 ---
 
@@ -114,47 +105,56 @@ $$
 4. Concatenated: $(1,5,8)$.
 5. After output projection: $(1,5,8)$ - the output projection maps $d_{\text{model}}\to d_{\text{model}}$, so the model dimension is preserved.
 6. Concatenating $h$ heads of width $d_k$ must reconstruct exactly $d_{\text{model}}$; if $d_{\text{model}}$ were not divisible by $h$, there would be no way to split it into $h$ equal-width heads (or one head would need a different width, breaking the uniform per-head computation).
-7. With $h=4$, $d_k=8/4=2$ per head - it halves. Each head now attends over the same $L$ keys as before (the *number* of values attended per head is unchanged), but each head represents its query/key/value comparisons in a narrower ($2$-dimensional instead of $4$-dimensional) subspace; the total representational budget $d_{\text{model}}=8$ is split more finely across more, narrower heads.
+7. With $h=4$, $d_k=8/4=2$ per head — it halves. Each head still attends over the same $L$ keys as before (the *number* of values attended per head is unchanged), but each head represents its query/key/value comparisons in a narrower (2-dimensional instead of 4-dimensional) subspace; the total representational budget $d_{\text{model}}=8$ is split more finely across more, narrower heads.
+
+### Exercise 2.4 - Induction heads (Optional/advanced)
+
+1. Both roles require **attention**: the previous-token head must pull information from a *different* position (the one immediately before), and the induction head must search over *all* earlier positions to find a match and copy from a (generally distant, non-local) position. The MLP sub-layer acts identically and independently on each token's own vector and has no mechanism to read from any other position at all, so it structurally cannot perform either role — only attention mixes information between positions.
+2. A single attention layer performs one comparison step: it reads Q/K/V computed from the current representations and produces one weighted combination. The circuit needs the previous-token head to first *write* "the token before me was A" into token B's representation, and only *then* can a later-layer induction head search for other positions whose *own* "previous token was B" signature matches, and copy what followed there. This is a composition where one head's output becomes part of the input read by another, later head — which requires two attention layers stacked in sequence; one attention operation cannot both "look one token back" and "search-and-copy from a matching earlier occurrence" at the same time.
+3. No parameters are updated when this happens — it occurs within a single forward pass over the given prompt, using the model's already-trained, fixed previous-token and induction heads to detect and exploit repetition that happens to be present in this particular input. The model's weights never change; what changes is that its existing, general-purpose circuitry finds and exploits a pattern specific to the current context. That is why it is called "in-context learning": the loss drop looks like learning, but no gradient descent or weight update is involved.
 
 ---
 
-# Part III - Encoder and decoder blocks {needspace="10"}
+## Part III - Transformer blocks, decoding, and scale
 
-## Exercise 3.1 - Labelling a transformer encoder layer
-
-Diagram: $X \to$ Multi-Head Self-Attention $\to (+X) \to$ Add & Norm $\to$ Feed-Forward $\to (+\text{previous output}) \to$ Add & Norm $\to$ output.
+### Exercise 3.1 - The transformer block and causal masking
 
 1. A residual connection means the sub-layer's *input* is added elementwise to its *output* before normalisation: $X' = X + \text{Sublayer}(X)$.
-2. It gives gradients a direct, unimpeded path (an identity shortcut) back to earlier layers, so they do not have to pass through every nonlinear transformation at every stacked layer. This is the same reasoning as for skip connections in deep ReLU networks: it mitigates vanishing gradients and makes very deep stacks trainable.
-3. Bidirectional attention lets every token use both left and right context, which is exactly what is needed to understand the meaning of a whole, already-written sentence. For left-to-right generation, however, a token must be predicted using only what came before it; allowing it to see future tokens during training would let the model trivially "cheat" by copying the answer, and that information would not exist yet at inference time.
+2. It gives gradients a direct, unimpeded path (an identity shortcut) back to earlier layers, so they do not have to pass through every nonlinear transformation at every stacked block. This is the same reasoning as for skip connections in deep ReLU networks: it mitigates vanishing gradients and makes very deep stacks trainable.
+3.
 
-## Exercise 3.2 - A decoder layer and causal masking
+   | query $i$ \ key $j$ | $j=0$ | $j=1$ | $j=2$ | $j=3$ |
+   |---|---|---|---|---|
+   | $i=0$ | True | False | False | False |
+   | $i=1$ | True | True | False | False |
+   | $i=2$ | True | True | True | False |
+   | $i=3$ | True | True | True | True |
 
-| query $i$ \ key $j$ | $j=0$ | $j=1$ | $j=2$ | $j=3$ |
-|---|---|---|---|---|
-| $i=0$ | True | False | False | False |
-| $i=1$ | True | True | False | False |
-| $i=2$ | True | True | True | False |
-| $i=3$ | True | True | True | True |
+4. Setting disallowed scores to $-\infty$ before softmax guarantees that, after softmax, the corresponding weight is exactly $0$ **while the remaining allowed weights still form a valid probability distribution that sums to $1$** over exactly the allowed keys. If instead weights were zeroed *after* an unmasked softmax, they would no longer sum to $1$ (an invalid distribution), and the masked positions would still have influenced the softmax normalisation and gradients during the forward/backward pass.
+5. Bidirectional attention lets every token use both left and right context, which is exactly what is needed to understand the meaning of a whole, already-written sentence. For left-to-right generation, however, a token must be predicted using only what came before it; allowing it to see future tokens during training would let the model trivially "cheat" by copying the answer, and that information would not exist yet at inference time.
 
-1. Setting disallowed scores to $-\infty$ before softmax guarantees that, after softmax, the corresponding weight is exactly $0$ **while the remaining allowed weights still form a valid probability distribution that sums to $1$** over exactly the allowed keys. If instead the weights were zeroed *after* an unmasked softmax, they would no longer sum to $1$ (an invalid distribution) and the masked positions would still have influenced the softmax normalisation and gradients during the forward/backward pass.
-2. In an encoder-decoder model, the entire source sequence is already available and fully encoded before generation starts. Cross-attention lets every decoder step look at the *complete* encoder output at once - there is no notion of "the future part of the source hasn't been generated yet", so no causal restriction is needed on that step (only the decoder's own self-attention over its own, still-being-generated output needs the causal mask).
-3. The **decoder-only** model (GPT-style) uses the causal mask, because it is trained to predict each token from only the tokens before it (next-token prediction), matching how it must generate text at inference time. The **encoder-only** model (BERT-style) does not use a causal mask, because it is trained with a bidirectional objective (e.g. predicting masked tokens using both left and right context) and is not used to generate text autoregressively.
+### Exercise 3.2 - The residual stream and the logit lens
 
-## Exercise 3.3 - Full dimensionality and parameter count
+1. If each block fully *replaced* $\mathbf x$ instead of adding to it, the representation at layer 5 would live in a completely different, layer-specific space than the representation at the final layer, with no reason to expect the *final* unembedding matrix (trained only to interpret the final layer's output) to produce anything meaningful when applied to it. Because every block only *adds* a comparatively small update to a running vector that starts as the token embedding and stays expressed in a broadly consistent basis throughout, the intermediate residual stream is already an evolving, partial approximation of the final answer, in the same coordinate system the final unembedding matrix expects — so reading it out early with that same matrix still gives a meaningful, if less refined, guess.
+2. It suggests the correct prediction is not immediately available from the embedding alone — it is refined progressively as more blocks add their contribution to the residual stream, moving from a plausible-but-wrong guess (*pressure*, a generic "physics quantity") toward the correct, specific answer (*charge*) only in the later layers. Different depths seem to do different work: earlier layers narrow down a broad semantic category, later layers pin down the specific correct fact.
+3. Because the MLP cannot exchange information between token positions, any "knowledge" it stores must be retrievable from a single token's own (already-attention-enriched) representation in context — e.g. factual associations of the form "given a context vector that already encodes '...electron has a negative...', output charge". It cannot itself decide *which* other tokens or context are relevant, gather information from elsewhere in the sequence, or match/copy patterns across positions — that is necessarily attention's job, since only attention mixes information across positions.
 
-1. Attention projections: $4 \times 512^2 = 4\times262{,}144={1{,}048{,}576}$.
-2. Feed-forward: $2\times512\times2048={2{,}097{,}152}$.
-3. Total per layer: $1{,}048{,}576+2{,}097{,}152={3{,}145{,}728}\approx3.1\text{M}$.
-4. For $N=6$ layers: $6\times3{,}145{,}728={18{,}874{,}368}\approx18.9\text{M}$.
-5.
-   - (a) embedding output: $(32,50,512)$
-   - (b) after the multi-head attention sub-layer: $(32,50,512)$
-   - (c) feed-forward hidden representation: $(32,50,2048)$
-   - (d) encoder layer output: $(32,50,512)$
-6. No, the parameter count does **not** depend on $L$: all weight matrices ($W_Q,W_K,W_V,W_O$ and the two feed-forward matrices) have fixed shapes independent of sequence length, and are applied/shared across all positions. The **computation and memory** do depend on $L$: the attention score matrix $A$ has shape $(B,h,L,L)$, so both its memory footprint and the cost of computing it scale **quadratically** in $L$; the feed-forward network's cost scales linearly in $L$ (applied independently per position).
+### Exercise 3.3 - Counting parameters and compute
 
-## Exercise 3.4 - Matching architectures to tasks
+1. Attention projections: $4d^2$.
+2. MLP: $2\times d\times d_{\text{ff}}$; with $d_{\text{ff}}=4d$: $2\times d\times4d=8d^2$.
+3. Total per block: $4d^2+8d^2=\boxed{12d^2}$.
+4. $12d^2=12\times768^2=12\times589{,}824=7{,}077{,}888$ per block; for $N=12$ blocks: $12\times7{,}077{,}888=\boxed{84{,}934{,}656}\approx84.9\text{M}$. Compared to GPT-2's reported 124.4M, about $124.4-84.9\approx39.5\text{M}$ is missing — this is essentially the token embedding matrix (38.6M, Exercise 1.2 Q1) plus the position embedding matrix ($1024\times768\approx0.8\text{M}$) plus the small remainder from biases and layer norms, none of which were counted in this block-only estimate.
+5. No, the parameter count does **not** depend on $L$: all weight matrices ($W_Q,W_K,W_V,W_O$ and the two MLP matrices) have fixed shapes independent of sequence length, applied/shared across all positions. The **computation and memory** do depend on $L$: the attention score matrix $A$ has shape $(B,h,L,L)$, so both its memory footprint and the cost of computing it scale **quadratically** in $L$; the MLP's cost scales linearly in $L$ (applied independently per position).
+6. **(Optional/advanced)** Once a token's key and value vectors are computed, they never change in later steps (they depend only on that token's own representation, fixed once it has been processed). If they are cached, generating the next token only requires computing one new query and comparing it against the already-known keys/values of all previous tokens — an $O(T)$ operation — instead of recomputing the entire $T\times T$ attention matrix (or recomputing every earlier token's key/value) from scratch, which would cost $O(T^2)$ overall across a whole generation. Reusing what does not change is what keeps the per-new-token cost linear in the number of tokens seen so far.
+
+### Exercise 3.4 - From logits to text (Optional/advanced)
+
+1. As $T\to0$, the exponent $z_i/T$ blows up in magnitude for the largest logit relative to all others, so the softmax collapses onto the single most likely token — this is **greedy decoding** (equivalent to argmax). It can loop because greedy decoding has no randomness: once the model starts producing a phrase whose continuation makes the same phrase the argmax again (e.g. "the capital of the French Republic" recurring as the most likely continuation of itself), it will deterministically keep choosing that same continuation forever, with no mechanism to escape.
+2. As $T$ increases well above 1, the logits are divided by an increasingly large number before the softmax, flattening the distribution toward uniform and increasing the chance of sampling less-likely, more novel/surprising tokens. The tradeoff against $T\to0$ is diversity/creativity vs. coherence: very high $T$ increases the chance of incoherent, ungrammatical, or nonsensical output (as in the $T=1.5$ example), while $T\to0$ is maximally coherent but repetitive and deterministic.
+3. When the model is very confident (mass concentrated on 1-2 tokens), top-p with a sensible $p$ automatically keeps only those 1-2 tokens, adapting to the model's confidence, whereas a fixed top-k might force in additional, implausible tokens the model considered essentially impossible just to fill the fixed quota $k$. When the model is very unsure (mass spread over hundreds of tokens), top-p automatically expands the candidate set to preserve that genuine diversity, whereas a fixed top-k would arbitrarily truncate to exactly $k$ candidates regardless of whether the true distribution needs more options. Top-p's candidate-set size adapts to context; top-k's does not.
+
+### Exercise 3.5 - Matching architectures to tasks (Optional/advanced)
 
 | task | architecture | justification |
 |---|---|---|
@@ -169,21 +169,24 @@ Diagram: $X \to$ Multi-Head Self-Attention $\to (+X) \to$ Add & Norm $\to$ Feed-
 
 | Statement | Answer |
 |:---|:---|
-| An embedding matrix has shape | **vocabulary size $\times$ embedding dimension** |
+| Real tokenizers use | **byte-pair encoding (BPE)**, trained once before the network, on subword units |
+| An embedding matrix has shape | **vocabulary size × embedding dimension** |
 | Plain self-attention, without extra input, is | **permutation equivariant / order-blind** |
 | Scores are divided by | $\sqrt{d_k}$, to keep score variance roughly constant as $d_k$ grows |
 | Per-head key/query dimension | $d_k = d_{\text{model}}/h$ |
-| What is added to token embeddings to restore order information | **positional encodings** |
+| What is added to token embeddings to restore order information | **positional encodings** (fixed sin/cos, learned, or RoPE) |
 | What masking technique makes a decoder generate strictly left-to-right | **causal (look-ahead) masking**, applied by setting disallowed scores to $-\infty$ before softmax |
+| The residual stream is | the running per-token vector that every block *adds* to, rather than replaces |
 | Cross-attention is used in | **encoder-decoder** architectures, letting the decoder attend to the full encoder output |
 | Transformer weight-matrix parameter counts scale with | $d_{\text{model}}$ and $d_{\text{ff}}$, **not** with sequence length $L$ |
 | Attention compute/memory scales with | $L^2$ (quadratically in sequence length) |
+| The KV cache avoids recomputing | keys and values of earlier tokens, keeping per-new-token generation cost linear in tokens so far |
 
 # Central teaching point
 
 **Attention** mixes information across positions and is order-blind by itself.
 
-**Positional information and causal masking** restore order information and, for decoders, the generation direction.
+Every shape in a transformer block is fixed by three numbers — $d_{\text{model}}$, $h$ (hence $d_k=d_{\text{model}}/h$) and $d_{\text{ff}}$ — and is otherwise independent of sequence length; only the *cost* of attention grows with $L$, quadratically. This is the central bookkeeping students should be able to reproduce for any given configuration.
 
 Every shape in a transformer layer is fixed by three numbers - $d_{\text{model}}$, $h$ (hence $d_k=d_{\text{model}}/h$) and $d_{\text{ff}}$ - and is otherwise independent of sequence length; only the *cost* of attention grows with $L$, quadratically. This is the central bookkeeping students should be able to reproduce for any given configuration.
 
@@ -197,6 +200,8 @@ Every shape in a transformer layer is fixed by three numbers - $d_{\text{model}}
 
 4. Layer normalisation computes its mean/variance over the feature dimension of a single token, independent of the batch and of other tokens, so it behaves identically regardless of batch size or sequence length and remains well-defined even for variable-length sequences or a batch size of 1. Batch normalisation's statistics are computed across the batch, which is unstable for small batches and does not transfer sensibly across positions in a sequence of varying length.
 
-5. If a decoder used bidirectional self-attention during training, position $i$ could directly see the token it is being trained to predict (since that token is present in the full, unmasked sequence), so the model could trivially copy it and the training loss would collapse without the model ever learning the actual predictive relationship. At inference time, however, future tokens do not exist yet, so a model trained this way would fail catastrophically compared to training.
+**Q6.** Only the self-attention sub-layer mixes information *between* different token positions. The MLP is applied identically and independently to each position's own vector (point-wise), so it can transform a token's representation but cannot exchange information with any other token.
 
-6. Only the self-attention sub-layer mixes information *between* different token positions. The feed-forward network is applied identically and independently to each position's own vector (point-wise), so it can transform a token's representation but cannot exchange information with any other token.
+**Q7 (Optional/advanced).** Freezing pretrained embeddings is preferable when the downstream training set is small (too little data/signal to safely update $V\times d$ parameters without overfitting or destroying the general-purpose structure learned on a much larger pretraining corpus) or when the downstream vocabulary/domain closely matches what the embeddings were pretrained on. Fine-tuning is preferable when there is enough downstream data to update the embeddings safely and the task benefits from task-specific adjustments — e.g. words that are pretrained as generically similar but need to be pulled apart (or together) for this particular task, or domain-specific vocabulary/usage that differs from the pretraining corpus.
+
+**Q8 (Optional/advanced).** $p_i \propto e^{z_i/T} = \left(e^{1/T}\right)^{z_i} = a^{z_i}$ with $a=e^{1/T}$ — so temperature sampling is exactly a softmax computed in base $a=e^{1/T}$ applied directly to the raw logits. Low temperature ($T<1$) gives $1/T>1$, so $a=e^{1/T}>e$: a larger base than $e$ amplifies the relative differences between logits when exponentiated, sharpening the distribution — consistent with $T\to0$ approaching a one-hot/argmax distribution. High temperature ($T>1$) gives $1/T<1$, so $a=e^{1/T}$ sits between $1$ and $e$ (approaching $1$ as $T\to\infty$); a base close to $1$ makes the exponential nearly flat regardless of the exponent, which flattens the distribution toward uniform — consistent with high $T$ increasing randomness/diversity.
