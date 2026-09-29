@@ -36,6 +36,11 @@ return {
       local width = im.attributes.width or '\\linewidth'
       width = width:gsub('(%d+)%%', function(n) return tonumber(n)/100 .. '\\linewidth' end)
       return pandoc.RawInline('latex', '\\includegraphics[width=' .. width .. ']{' .. src .. '}')
+    end,
+    Span = function(sp)
+      if has_class(sp, 'hint') then
+        return pandoc.RawInline('latex', '\\hint{' .. latex({pandoc.Plain(sp.content)}) .. '}')
+      end
     end },
   { Table = function(t)
       local cols = t.attributes.columns

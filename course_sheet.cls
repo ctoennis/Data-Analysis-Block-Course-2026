@@ -74,6 +74,9 @@
     }}%
 }
 
+% Small, gray inline hint text (e.g. parenthetical pointers within a question)
+\newcommand{\hint}[1]{{\scriptsize\color{gray}#1}}
+
 % Warning command for adding disclaimer statements
 \newcommand{\warning}{%
     \begin{mdframed}[backgroundcolor=gray!10,linewidth=0pt]
